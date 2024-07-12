@@ -73,16 +73,16 @@ const Ticket = ({ event }) => {
     }
   };
 
-  // const loadScript = () => {
-  //   loadRazorpay('https://checkout.razorpay.com/v1/checkout.js', () => {
-  //     console.log('Razorpay Checkout script loaded successfully.');
-  //   });
-  // };
+  const loadScript = () => {
+    loadRazorpay('https://checkout.razorpay.com/v1/checkout.js', () => {
+      console.log('Razorpay Checkout script loaded successfully.');
+    });
+  };
 
   //If user exists
   useEffect(() => {
     verifyUser();
-    // loadScript();
+    loadScript();
   }, [])
 
 
