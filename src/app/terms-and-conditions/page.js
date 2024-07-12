@@ -1,0 +1,54 @@
+import React from 'react'
+import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
+
+import Link from 'next/link'
+
+
+//Components
+
+
+const TermsOfUse = () => {
+  return (
+    <div className='home-page bg-white text-black min-h-[100svh]'>
+      <Navbar mode="light" />
+      <div className='pt-10 pb-20 px-10 terms'>
+        <h1 className='text-3xl font-coolvetica'>WEBSITE TERMS OF USE</h1>
+        <h2 className='text-xl mt-5 mb-2 font-medium'>Introduction</h2>
+        <p>Welcome to the Onlybees in association with KL & Sons website at <Link href='https://Onlybees.in' className='underline'>https://Onlybees.in/</Link> (&ldquo;Website&rdquo;). The Website is operated by Onlybees (&ldquo;Onlybees&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;). Our registered office is KL &amp; SON Complex, Jowai, Meghalaya, 793150. Access to and use of our Website is subject to the terms of use set out on this page (&ldquo;Terms of Use&rdquo;), as well as our Privacy Policy. By accessing our Website you agree to our Terms of Use. If you have any questions about them, please contact us using the contact details at the end of these Terms of Use. If you purchase any products from the Website, your purchases will be subject to the terms set out in our Purchase Terms &amp; Conditions.</p>
+        <h2 className='text-xl mt-5 mb-2 font-medium'>Terms of use</h2>
+        <p>Please ensure that you have read and understood our Terms of Use and our Privacy Policy. From time to time, we may vary our Terms of Use. The revised Terms of Use will be available on our Website. Please check back regularly to ensure you are aware of any variations we may make. If you continue to use our Website after we make any changes, you will be deemed to have accepted any variations to our Terms of Use. If you do not agree to such variations, we ask you not to use our Website. These Terms of Use were last updated on the date stated at the top of this page.</p>
+        <h2 className='text-xl mt-5 mb-2 font-medium'>Accuracy and Availability</h2>
+        <p>We do our best to make sure that our Website is accurate, up-to-date, and free from bugs, but we cannot promise that it will be. You are responsible for putting in place your own internet security and safety measures. Our Website is provided free of charge and has not been developed to meet your specific requirements. We cannot promise that it will be fit or suitable for your specific purposes. Access to our Website is permitted on a temporary basis and we reserve the right to suspend or terminate access to any part of it at any time without notice. We update our Website regularly and reserve the right to add, remove, and otherwise change the Website and/or its content at any time without notice.</p>
+        <h2 className='text-xl mt-5 mb-2 font-medium'>Access</h2>
+        <p>You are responsible for making all arrangements necessary to access our Website (and for any costs of doing so). In particular, you are responsible for ensuring that your computer and/or portable device is compatible with our Website. You are responsible for ensuring that all persons accessing the Website through your internet connection are aware of these Terms of Use. While using our Website you must observe the following rules:</p>
+        <ul class="list-disc pl-4">
+          <li>You are not permitted to use, or cause others to use, any automated system or software to extract content or data from our Website for commercial purposes except where you or any applicable third party has entered into a written agreement with us that permits such activity;</li>
+          <li>You agree not to use our Website for any illegal or unauthorized purpose and you agree to comply with all laws and regulations applicable to your use of our Website, including copyright and other intellectual property laws;</li>
+          <li>You must not attempt to restrict another user of our Website from using or enjoying our Website and you must not encourage others to breach our Terms of Use;</li>
+          <li>You must not interfere with our Website or any servers or networks connected to our Website, including by transmitting any worms, viruses, malware, spyware, or any other code of a destructive, malicious, or disruptive nature. You must not inject content or code or otherwise alter or interfere with the way any page of our Website is rendered or displayed in a user’s browser or device;</li>
+          <li>You must not change, modify, or alter our Website or change, modify, or alter another website so as to inaccurately imply an association with our Website or with us; and</li>
+          <li>You must not access our Website via a means we have not authorized in writing in advance, including automated devices, scripts, bots, spiders, crawlers, or scrapers (except for standard search engine technologies).</li>
+        </ul>
+        <p>If you breach any of our Terms of Use, or any of the other terms and policies referred to in our Terms of Use, your ability to access and use our Website may be terminated by us immediately, where possible by giving written notice to you using the contact details you provide to us.</p>
+        <h2 className='text-xl mt-5 mb-2 font-medium'>Account</h2>
+        <p>If you register for an account on our Website, your account details are personal to you and you must keep such information confidential and not disclose them to any other person. We will be entitled to treat any action carried out through your account as being carried out by you. You must notify us immediately if you have reason to believe that your account details may have been compromised or used by any other person. We reserve the right to suspend or terminate your access to your account for any reason in our discretion.</p>
+        <h2 className='text-xl mt-5 mb-2 font-medium'>Privacy</h2>
+        <p>The privacy of your personal information is important to us. Any personal information that you provide to us will be dealt with in accordance with our Privacy Policy, which explains what personal information we collect from you, how and why we collect, store, use, and share such information, your rights in relation to your personal information, and how to contact us and supervisory authorities if you have a query or complaint about the use of your personal information.</p>
+        <h2 className='text-xl mt-5 mb-2 font-medium'>Intellectual Property Rights</h2>
+        <p>Our Website and its contents are protected by certain rights, including registered and unregistered intellectual property rights (“Rights”). These Rights belong either to us or to our licensors. We and our licensors expressly reserve all Rights in and to our Website and its contents. In particular, we reserve all Rights in the registered trademark “Onlybees,” the Onlybees logo, and the “Onlybees.in” domain name and all related domain names, trademarks, logos, brand names, and/or trading names appearing on our Website. Nothing in these Terms grants you any legal rights in our Website or its contents other than as necessary to enable you to access and use our Website in accordance with these Terms of Use. The use of any trademarks on our Website is strictly prohibited unless you have our prior written permission.</p>
+        <h2 className='text-xl mt-5 mb-2 font-medium'>Links</h2>
+        <p>You may link to any page of our Website, provided that you do so for non-commercial purposes and in a way that is fair and legal and which does not damage our reputation or take advantage of it. For the avoidance of doubt, the linking site must not contain any adult or illegal material or any material that is offensive, harassing, or otherwise objectionable. We reserve the right to withdraw linking permission at any time and without notice. You must not link to our Website in such a way as to suggest any form of association, approval, or endorsement on our part where none exists and you must not remove, obscure, or modify in any way any advertisements, copyright notice, or other information on our Website. Our Website must not be framed on any other website.</p>
+        <h2 className='text-xl mt-5 mb-2 font-medium'>Third Parties</h2>
+        <p>Our Website may contain links to third-party websites and services. If you decide to visit any third-party website or use a third-party service, or purchase products from that third party, you do so at your own risk. It is your responsibility to satisfy yourself as to the reputation of such third parties and the services they offer. We are not responsible for the content, accuracy, or opinions expressed on third-party websites or services. Links that we make available do not imply that we are, or our Website is, affiliated with or associated with such websites or services. Your browsing and interaction on any other website or your use of other services, including websites and services which have a link to or from our Website, is subject to that operator’s own rules and policies. In particular, third-party websites will process your personal information in accordance with their own privacy notices. Please read all applicable third-party policies and terms and conditions before proceeding.</p>
+        <h2 className='text-xl mt-5 mb-2 font-medium'>General Provisions &amp; Applicable Law</h2>
+        <p>Our Website may contain links to third-party websites and services. If you decide to visit any third-party website or use a third-party service, or purchase products from that third party, you do so at your own risk. It is your responsibility to satisfy yourself as to the reputation of such third parties and the services they offer. We are not responsible for the content, accuracy, or opinions expressed on third-party websites or services. Links that we make available do not imply that we are, or our Website is, affiliated with or associated with such websites or services. Your browsing and interaction on any other website or your use of other services, including websites and services which have a link to or from our Website, is subject to that operator’s own rules and policies. In particular, third-party websites will process your personal information in accordance with their own privacy notices. Please read all applicable third-party policies and terms and conditions before proceeding.</p>
+        <h2 className='text-xl mt-5 mb-2 font-medium'>Contacts</h2>
+        <p>We will try to answer your enquiry or resolve any complaint as soon as possible. If you need help, contact us at <a href="mailto:info@Onlybees.in" className='underline'>info@Onlybees.in</a>.</p>
+      </div>
+      <Footer mode="light" />
+    </div>
+  )
+}
+
+export default TermsOfUse

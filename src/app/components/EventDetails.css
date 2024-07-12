@@ -1,0 +1,71 @@
+.event-container{
+    width: 60vw;
+    margin: 0 auto;
+}
+
+.flyer{
+    width: 26vw;
+}
+
+.flyer img{
+    border-radius: 15px;
+    min-width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+
+.about-text{
+    background-color: #1e1e1e;
+    height: 19rem;
+    scrollbar-width: none;
+}
+
+.btn-container{
+    align-items: center;
+    height: 100%;
+}
+
+
+
+/* Book button */
+#paymentForm{
+    text-align: left !important;
+}
+
+.razorpay-payment-button.svelte-ohbfj8{
+    width: 100% !important;
+}
+
+.PaymentButton.svelte-ekc7fv.svelte-ekc7fv{
+    width: 100% !important;
+    border-radius: 50px !important;
+}
+
+.PaymentButton--dark.svelte-ekc7fv.svelte-ekc7fv{
+    background-color: #00FF38 !important;
+}
+
+.PaymentButton--dark.svelte-ekc7fv.svelte-ekc7fv{
+    color: black !important;
+}
+
+
+
+@media only screen and (max-width: 768px) {
+    .flyer{
+        width: 100%;
+    }
+    .event-container{
+        width: 82vw;
+    }
+    .about-text{
+        height: 25rem;
+    }
+    .price{
+        width: 100%;
+    }
+    .btn-inner-container{
+        width: 100%;
+    }
+}
