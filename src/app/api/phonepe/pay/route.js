@@ -23,19 +23,19 @@ export const POST = async (req, res) => {
         // console.log(payload)
 
         const dataPayload = JSON.stringify(payload);
+        // console.log(dataPayload)
         const dataBase64 = Buffer.from(dataPayload).toString('base64');
+        console.log(dataBase64)
 
-        // console.log(dataBase64)
-
-        const salt = '24da7cf7-2776-4494-890a-1b13627baa86'; // Replace with your actual salt value
+        const salt = process.env.NEXT_PUBLIC_PHONEPE_SALT_KEY; // Replace with your actual salt value
         const fullURL = `${dataBase64}/pg/v1/pay${salt}`;
         const dataSha256 = sha256(fullURL).toString();
-        const checksum = `${dataSha256}###1`;
+        const checksum = `${dataSha256}###${process.env.NEXT_PUBLIC_PHONEPE_SALT_INDEX}`;
 
-        // console.log(checksum)
+        console.log(checksum)
 
         try {
-            const response = await axios.post('https://api.phonepe.com/apis/hermes/pg/v1/pay', { request: dataBase64 }, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_PHONEPE_HOST_URL}/pg/v1/pay`, { request: dataBase64 }, {
                 headers: {
                     accept: 'application/json',
                     'Content-Type': 'application/json',
@@ -43,14 +43,13 @@ export const POST = async (req, res) => {
                 },
             });
 
+            // console.log(response)
+
             return new Response(JSON.stringify({ success: true, data: response.data }), { status: 200 });
-            //   res.status(200).json(response.data);
         } catch (error) {
             return new Response(JSON.stringify({ success: false, error: 'Server Error' }), { status: 500 });
         }
     } else {
-        // res.setHeader('Allow', ['POST']);
         return new Response(JSON.stringify({ success: false, error: 'Method not allowed!' }), { status: 405 });
-        // res.status(405).end(`Method ${req.method} Not Allowed`);
     }
 }

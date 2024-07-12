@@ -5,6 +5,7 @@ import axios from 'axios';
 
 // Importing UUID v4 for generating unique IDs
 import { generateReceiptId } from "@/lib/uniqueReceipt"
+import { v4 as uuidv4 } from 'uuid';
 
 import React, { useState, useEffect } from 'react'
 
@@ -31,6 +32,10 @@ import { useRouter } from "next/navigation"
 // import razorpay from '@/lib/razorpay';
 
 import Razorpay from 'razorpay';
+
+
+
+
 
 const Ticket = ({ event }) => {
   const [tickets, setTickets] = useState([]);
@@ -68,31 +73,31 @@ const Ticket = ({ event }) => {
     }
   };
 
-  const loadScript = () => {
-    loadRazorpay('https://checkout.razorpay.com/v1/checkout.js', () => {
-      console.log('Razorpay Checkout script loaded successfully.');
-    });
-  };
+  // const loadScript = () => {
+  //   loadRazorpay('https://checkout.razorpay.com/v1/checkout.js', () => {
+  //     console.log('Razorpay Checkout script loaded successfully.');
+  //   });
+  // };
 
   //If user exists
   useEffect(() => {
     verifyUser();
-    loadScript();
+    // loadScript();
   }, [])
 
 
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      event.preventDefault();
-      event.returnValue = ''; // This is required for Chrome to show the confirmation dialog
-    };
+  // useEffect(() => {
+  //   const handleBeforeUnload = (event) => {
+  //     event.preventDefault();
+  //     event.returnValue = ''; // This is required for Chrome to show the confirmation dialog
+  //   };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+  //   window.addEventListener('beforeunload', handleBeforeUnload);
 
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleBeforeUnload);
+  //   };
+  // }, []);
 
   useEffect(() => {
     if (event && event.ticketPrice) {
@@ -154,6 +159,29 @@ const Ticket = ({ event }) => {
   };
 
   const saveOrder = async (ticket, orderDetails) => {
+
+    // -------------------------- Razorpay --------------------------
+
+
+    //   try {
+    //     const res = await axios.post('/api/razorpay/save-order', {
+    //       ticket,
+    //       orderDetails,
+    //       convenienceFee: convFee,
+    //       platformFee,
+    //       phone: ph,
+    //       email: form.email,
+    // firstname: form.firstname,
+    // lastname: form.lastname,
+    //     });
+    //   } catch (error) {
+    //     console.log("Some error occured")
+    //   }
+
+
+    // -------------------------- PhonePe --------------------------
+
+
     try {
       const res = await axios.post('/api/razorpay/save-order', {
         ticket,
@@ -162,12 +190,13 @@ const Ticket = ({ event }) => {
         platformFee,
         phone: ph,
         email: form.email,
-	firstname: form.firstname,
-	lastname: form.lastname,
+        firstname: form.firstname,
+        lastname: form.lastname,
       });
     } catch (error) {
       console.log("Some error occured")
     }
+
   }
 
   const createNewUser = async () => {
@@ -219,101 +248,170 @@ const Ticket = ({ event }) => {
   }
 
   const handleCheckout = async () => {
+
+
+    // -------------------------- Razorpay --------------------------
+
+    // try {
+    //   const receiptId = generateReceiptId();
+    //   const ticketDetails = tickets.filter(ticket => ticket.selected > 0).map(ticket => ({
+    //     ticketType: ticket.phaseName, // Assuming phaseName serves as ticketType
+    //     quantity: ticket.selected,    // Number of tickets selected
+    //     price: ticket.price,          // Price per ticket
+    //     // Add any other necessary fields here
+    //   }));
+
+    //   const userID = (user.isRegistered) ? user.userData._id : "1000000001";
+    //   const notes = (user.isRegistered) ? "" : "New user";
+
+    //   const response = await axios.post('/api/razorpay/order', {
+    //     userId: userID, // Replace with actual user ID
+    //     eventId: event._id, // Replace with actual event ID
+    //     ticketDetails: ticketDetails,
+    //     amount: totalAmt,
+    //     currency: 'INR',
+    //     receipt: receiptId, // Replace with actual receipt ID
+    //     notes: { notes }, // Optional: Replace with any additional notes
+    //   });
+
+    //   const { order, ticket, orderDetails } = response.data;
+    //   setTicketDet(ticket)
+    //   setOrderDet(orderDetails)
+
+
+    //   const keyId = process.env.RAZORPAY_KEY_ID;
+    //   const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    //   const razorpay = new Razorpay({
+    //     key_id: "rzp_test_Hw6O2zGAwkq0jb",
+    //     key_secret: "kPUxYjHvaZHRXYnL8825eomm",
+    //   });
+
+    //   // Open Razorpay checkout form
+    //   const options = {
+    //     key: razorpay.key_id,
+    //     amount: order.amount * 100, // Amount in paise
+    //     currency: order.currency,
+    //     name: 'Onlybees',
+    //     image: "https://shorturl.at/kPO66",
+    //     description: `Entry tickets for ${event.title}`,
+    //     order_id: order.id,
+
+    //     handler: async function (response) {
+    //       // alert(`Payment successful. Payment ID: ${response.razorpay_payment_id}`);
+    //       const paymentId = response.razorpay_payment_id;
+    //       if (user.userData) {
+    //         saveOrder(ticket, { ...orderDetails, paymentId });
+    //       }
+    //       else {
+    //         userExists().then((exists) => {
+    //           if (exists) {
+    //             saveOrder(ticket, { ...orderDetails, paymentId });
+    //           } else {
+    //             createNewUser().then((created) => {
+    //               saveOrder(ticket, { ...orderDetails, paymentId });
+    //             })
+    //           }
+    //         });
+    //       }
+    //       setPage("success")
+    //       // router.push("/dashboard/my-tickets")
+    //     },
+
+    //     prefill: {
+    //       name: `${form.firstname} ${form.lastname}`,
+    //       email: form.email,
+    //       contact: ph,
+    //     },
+    //     theme: {
+    //       color: '#00FF38',
+    //     },
+    //   };
+
+    //   if (typeof window !== 'undefined' && typeof window.Razorpay === 'function') {
+    //     const rzp1 = new window.Razorpay(options);
+    //     rzp1.open();
+    //   } else {
+    //     console.error('Razorpay library not available');
+    //   }
+
+
+    // } catch (error) {
+    //   console.error('Error initiating payment:', error);
+    //   // Handle error, e.g., show error message to user
+    //   setPage("failed")
+    // }
+
+
+
+    // -------------------------- PhonePe --------------------------
+
+    // e.preventDefault();
+
+    const transactionid = "Ev-" + uuidv4().toString(36).slice(-6);
+
+    const payload = {
+      merchantId: process.env.NEXT_PUBLIC_PHONEPE_MERCHANT_ID,
+      merchantTransactionId: transactionid,
+      merchantUserId: (user.isRegistered) ? user.userData._id : "1000000001",
+      amount: 200,
+      redirectUrl: `https://onlybees.in/`,
+      redirectMode: "POST",
+      callbackUrl: `https://onlybees.in/`,
+      mobileNumber: ph,
+      paymentInstrument: {
+        type: "PAY_PAGE",
+      },
+    };
+
     try {
-      const receiptId = generateReceiptId();
-      const ticketDetails = tickets.filter(ticket => ticket.selected > 0).map(ticket => ({
-        ticketType: ticket.phaseName, // Assuming phaseName serves as ticketType
-        quantity: ticket.selected,    // Number of tickets selected
-        price: ticket.price,          // Price per ticket
-        // Add any other necessary fields here
-      }));
-
-      const userID = (user.isRegistered) ? user.userData._id : "1000000001";
-      const notes = (user.isRegistered) ? "" : "New user";
-
-      const response = await axios.post('/api/razorpay/order', {
-        userId: userID, // Replace with actual user ID
-        eventId: event._id, // Replace with actual event ID
-        ticketDetails: ticketDetails,
-        amount: totalAmt,
-        currency: 'INR',
-        receipt: receiptId, // Replace with actual receipt ID
-        notes: { notes }, // Optional: Replace with any additional notes
+      const response = await axios.post('/api/phonepe/pay', payload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
-      const { order, ticket, orderDetails } = response.data;
-      setTicketDet(ticket)
-      setOrderDet(orderDetails)
+      if (response.ok) {
+        const receiptId = generateReceiptId();
+        const ticketDetails = tickets.filter(ticket => ticket.selected > 0).map(ticket => ({
+          ticketType: ticket.phaseName, // Assuming phaseName serves as ticketType
+          quantity: ticket.selected,    // Number of tickets selected
+          price: ticket.price,          // Price per ticket
+          // Add any other necessary fields here
+        }));
 
+        const userID = (user.isRegistered) ? user.userData._id : "1000000001";
+        const notes = (user.isRegistered) ? "" : "New user";
 
-      const keyId = process.env.RAZORPAY_KEY_ID;
-      const keySecret = process.env.RAZORPAY_KEY_SECRET;
+        const response = await axios.post('/api/razorpay/order', {
+          userId: userID, // Replace with actual user ID
+          eventId: event._id, // Replace with actual event ID
+          ticketDetails: ticketDetails,
+          amount: totalAmt,
+          currency: 'INR',
+          receipt: receiptId, // Replace with actual receipt ID
+          notes: { notes }, // Optional: Replace with any additional notes
+        });
 
-      const razorpay = new Razorpay({
-        key_id: "rzp_test_Hw6O2zGAwkq0jb",
-        key_secret: "kPUxYjHvaZHRXYnL8825eomm",
-      });
-
-      // Open Razorpay checkout form
-      const options = {
-        key: razorpay.key_id,
-        amount: order.amount * 100, // Amount in paise
-        currency: order.currency,
-        name: 'Onlybees',
-        image: "https://shorturl.at/kPO66",
-        description: `Entry tickets for ${event.title}`,
-        order_id: order.id,
-
-        handler: async function (response) {
-          // alert(`Payment successful. Payment ID: ${response.razorpay_payment_id}`);
-          const paymentId = response.razorpay_payment_id;
-          if (user.userData) {
-            saveOrder(ticket, { ...orderDetails, paymentId });
-          }
-          else {
-            userExists().then((exists) => {
-              if (exists) {
-                saveOrder(ticket, { ...orderDetails, paymentId });
-              } else {
-                createNewUser().then((created) => {
-                  saveOrder(ticket, { ...orderDetails, paymentId });
-                })
-              }
-            });
-          }
-          setPage("success")
-          // router.push("/dashboard/my-tickets")
-        },
-
-        prefill: {
-          name: `${form.firstname} ${form.lastname}`,
-          email: form.email,
-          contact: ph,
-        },
-        theme: {
-          color: '#00FF38',
-        },
-      };
-
-      if (typeof window !== 'undefined' && typeof window.Razorpay === 'function') {
-        const rzp1 = new window.Razorpay(options);
-        rzp1.open();
-      } else {
-        console.error('Razorpay library not available');
+        const { order, ticket, orderDetails } = response.data;
+        setTicketDet(ticket)
+        setOrderDet(orderDetails)
       }
 
-
+      const redirectUrl = response.data.data.data.instrumentResponse.redirectInfo.url;
+      window.location.href = redirectUrl;
     } catch (error) {
-      console.error('Error initiating payment:', error);
-      // Handle error, e.g., show error message to user
-      setPage("failed")
+      console.error('Payment request error: ', error.response ? error.response.data : error.message);
     }
+
+
+
   };
 
   return (
     <>
       <Toaster toastOptions={{ duration: 4000 }} />
-      { page !== "success" && page !== "failed" && <Header
+      {page !== "success" && page !== "failed" && <Header
         mode="dark"
         page={page}
         setPage={setPage}
@@ -342,14 +440,14 @@ const Ticket = ({ event }) => {
         />
       )}
       {page === "success" && <Success
-          event={event}
-          ticket={ticketDet}
-          form={form}
-          ph={ph}
+        event={event}
+        ticket={ticketDet}
+        form={form}
+        ph={ph}
       />}
       {page === "failed" && <Failed
-          event={event}
-          orderDetails={orderDet}
+        event={event}
+        orderDetails={orderDet}
 
       />}
       {page !== "success" && page !== "failed" && <CheckoutContainer
