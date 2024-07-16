@@ -16,12 +16,21 @@ const bookingSchema = new mongoose.Schema({
   qrLink: { type: String, default: null}
 }, { _id: false });
 
+const sportsBookingSchema = new mongoose.Schema({
+  match: { type: mongoose.Schema.Types.ObjectId, ref: 'Match' },
+  ticket: { type: mongoose.Schema.Types.ObjectId, ref: 'DurandTickets' },
+  bookingDate: Date,
+  orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'DurandOrder' },
+  qrLink: { type: String, default: null}
+}, { _id: false });
+
 const UserSchema = new mongoose.Schema({
   phone: { type: String, required: true, unique: true },
   firstname: { type: String, required: true },
   lastname: { type: String },
   email: { type: String },
   bookings: [bookingSchema], // Array of booking subdocuments
+  sportsBookings: [sportsBookingSchema],
   createdAt: { type: Date, default: Date.now },
 });
 

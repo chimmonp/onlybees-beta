@@ -24,16 +24,12 @@ const page = () => {
     const pathname = usePathname().split('/').pop();
 
     const [form, setForm] = useState({
-        firstname: null,
-        lastname: null,
-        email: null,
+        firstname: "",
+        lastname: "",
+        email: "",
     });
     const { user, login } = useAuth();
-    const [ph, setPh] = useState("");
-
-    useEffect(() => {
-        console.log(durandData)
-    }, [])
+    const [ph, setPh] = useState("911234567890");
 
 
     //Change state on input change
@@ -127,7 +123,12 @@ const page = () => {
     useEffect(() => {
         verifyUser();
         // loadScript();
+        console.log(durandData)
     }, [])
+
+    useEffect(() => {
+        console.log(durandData)
+    }, [durandData])
 
     useEffect(() => {
         if (user.userData) {
@@ -145,49 +146,92 @@ const page = () => {
     const makePayment = async (e) => {
 
         // e.preventDefault();
+        // alert("make payment")
 
-        const transactionid = "Tr-" + uuidv4().toString(36).slice(-6);
+        const transactionId = "Tr-" + uuidv4().toString(36).slice(-6);
 
-        const payload = {
-            merchantId: process.env.NEXT_PUBLIC_MERCHANT_ID,
-            merchantTransactionId: transactionid,
-            merchantUserId: 'OB-' + uuidv4().toString(36).slice(-6),
-            amount: 200,
-            redirectUrl: `https://onlybees.in/`,
-            redirectMode: "POST",
-            callbackUrl: `https://onlybees.in/`,
-            mobileNumber: '8415031939',
-            paymentInstrument: {
-                type: "PAY_PAGE",
-            },
+        const orderPayload = {
+            transactionId,
+            userId: user.userData?._id,
+            match: durandData.matchDetails._id,
+            status: "PENDING",
+            amount: durandData.amount.totalAmtCalc, // example amount
+            quantity: durandData.tickets,
+            section: durandData.sectionData._id,
+            currency: "INR",
+            notes: `Tickets for Durand Cup on ${durandData.matchDetails.slug}`,
+            name: `${form.firstname} ${form.lastname}`,
+            phone: ph,
+            email: form.email
+            // Include other necessary details like eventId, ticketDetails, etc.
         };
 
         try {
-            const response = await axios.post('/api/phonepe/pay', payload, {
+
+            // Save transaction to the database
+            const orderResponse = await axios.post('/api/durand-cup/save-order', orderPayload, {
+                // method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                // body: JSON.stringify(orderPayload),
             });
 
-            // console.log(response.data.data.data.instrumentResponse.redirectInfo.url)
+            if (orderResponse.data.success) {
+                
+                const payload = {
+                    merchantId: process.env.NEXT_PUBLIC_PHONEPE_MERCHANT_ID,
+                    merchantTransactionId: transactionId,
+                    merchantUserId: 'OB-' + uuidv4().toString(36).slice(-6),
+                    amount: 200,
+                    redirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/phonepe/status/${transactionId}`,
+                    redirectMode: "POST",
+                    callbackUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/phonepe/status/${transactionId}`,
+                    mobileNumber: ph,
+                    paymentInstrument: {
+                        type: "PAY_PAGE",
+                    },
+                };
 
-            const redirectUrl = response.data.data.data.instrumentResponse.redirectInfo.url;
-            window.location.href = redirectUrl;
+
+                const response = await axios.post('/api/phonepe/pay', payload, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                // console.log(response.data.data.data.instrumentResponse.redirectInfo.url)
+
+                const redirectUrl = response.data.data.data.instrumentResponse.redirectInfo.url;
+                window.location.href = redirectUrl;
+            }
         } catch (error) {
             console.error('Payment request error: ', error.response ? error.response.data : error.message);
         }
     };
 
     const handleCheckout = async () => {
-        if (form.firstname !== '' && form.email !== '' && ph!==null) {
-            if(user.userData)
-                makePayment()
+        // console.log(user)
+        if (user.userData) {
+            makePayment()
         }
-        // makePayment()
+        else {
+            userExists().then((exists) => {
+                if (exists) {
+                    // saveOrder(ticket, { ...orderDetails, paymentId });
+                    makePayment()
+                } else {
+                    createNewUser().then((created) => {
+                        // saveOrder(ticket, { ...orderDetails, paymentId });
+                        makePayment()
+                    })
+                }
+            });
+        }
     }
 
     if (durandData.length === 0) {
-        router.push("/tickets/aug-02")
+        router.push("/durand-cup/tickets/aug-02")
     }
 
     if (durandData.length !== 0) {
@@ -262,7 +306,7 @@ const page = () => {
                     </div>
                 </div>
                 {pathname === 'buy' && <div className=' lg:py-0 py-3 fixed bottom-0 lg:w-1/3 w-screen bg-white px-5'>
-                    <div onClick={handleCheckout} className='bg-[#00FF38] mt-3 py-5 rounded-md font-semibold text-center'>
+                    <div onClick={handleCheckout} className='bg-[#00FF38] cursor-pointer mt-3 py-5 rounded-md font-semibold text-center'>
                         <p>PAY ₹{durandData.amount.totalAmtCalc}</p>
                     </div>
                 </div>}

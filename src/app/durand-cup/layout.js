@@ -1,11 +1,8 @@
-import { Inter } from "next/font/google";
-import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
 
 //Context
 import { DurandProvider } from '@/context/DurandContext';
-import { AuthProvider } from '../context/AuthContext';
+import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata = {
   title: "Onlybees Sports",
@@ -15,12 +12,12 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <div className='text-black bg-white'>
       <AuthProvider>
         <DurandProvider>
-          <body className={inter.className}>{children}</body>
+          {children}
         </DurandProvider>
       </AuthProvider>
-    </html>
+    </div>
   );
 }

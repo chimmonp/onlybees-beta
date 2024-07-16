@@ -193,7 +193,7 @@ const TicketInfo = ({ tickets, setTickets, sectionData, matchDetails }) => {
                     <p className='text-xs'>QUANTITY: {tickets}</p>
                 </div>
                 {tickets > 0 && sectionData.price ? (
-                    <Link href="/tickets/buy">
+                    <Link href="/durand-cup/tickets/buy">
                         <div className='bg-[#00FF38] mt-3 py-5 rounded-md font-semibold'>BOOK NOW</div>
                     </Link>
                 ) : (

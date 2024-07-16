@@ -86,7 +86,7 @@ const SeatingPage = (props) => {
     const allSections = async () => {
         try {
             // setLoading(true);
-            const response = await fetch(`/api/allsections`);
+            const response = await fetch(`/api/durand-cup/allsections`);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
@@ -108,7 +108,7 @@ const SeatingPage = (props) => {
         }
         try {
             // setLoading(true);
-            const response = await fetch(`/api/getsectiondata?sectionId=${selectedSection}`);
+            const response = await fetch(`/api/durand-cup/getsectiondata?sectionId=${selectedSection}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
@@ -128,7 +128,7 @@ const SeatingPage = (props) => {
     const fetchMatch = async () => {
         try {
             // setLoading(true);
-            const response = await fetch(`/api/getmatchdata?slug=${slugEnd}`);
+            const response = await fetch(`/api/durand-cup/getmatchdata?slug=${slugEnd}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch data');
             }
@@ -192,7 +192,7 @@ const SeatingPage = (props) => {
         <div className='flex lg:flex-row flex-col'>
             <CalendarBar />
             <div className='lg:w-[65svw] w-screen bg-[#D9D9D9] relative px-5'>
-                <div className='absolute top-0 px-5 lg:w-[20svw] w-[100svw] py-3 lg:right-[calc(50%-10svw)] right-[calc(50%-50svw)] text-center lg:rounded-b-full bg-black text-white'>
+                <div className='absolute top-0 px-5 lg:w-[100%] w-[100svw] py-3 lg:left-0 right-[calc(50%-50svw)] text-center  bg-black text-white'>
                     <h1>{matchDetails.teamA} vs. {matchDetails.teamB}</h1>
                 </div>
                 <div className='pt-32 lg:px-10 '>

@@ -25,14 +25,14 @@ export const POST = async (req, res) => {
         const dataPayload = JSON.stringify(payload);
         // console.log(dataPayload)
         const dataBase64 = Buffer.from(dataPayload).toString('base64');
-        console.log(dataBase64)
+        // console.log(dataBase64)
 
         const salt = process.env.NEXT_PUBLIC_PHONEPE_SALT_KEY; // Replace with your actual salt value
         const fullURL = `${dataBase64}/pg/v1/pay${salt}`;
         const dataSha256 = sha256(fullURL).toString();
         const checksum = `${dataSha256}###${process.env.NEXT_PUBLIC_PHONEPE_SALT_INDEX}`;
 
-        console.log(checksum)
+        // console.log(checksum)
 
         try {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_PHONEPE_HOST_URL}/pg/v1/pay`, { request: dataBase64 }, {
