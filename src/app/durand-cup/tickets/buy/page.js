@@ -156,6 +156,7 @@ const page = () => {
             match: durandData.matchDetails._id,
             status: "PENDING",
             amount: durandData.amount.totalAmtCalc, // example amount
+            baseAmount: durandData.amount.subtotalAmt,
             quantity: durandData.tickets,
             section: durandData.sectionData._id,
             currency: "INR",
@@ -178,7 +179,7 @@ const page = () => {
             });
 
             if (orderResponse.data.success) {
-                
+
                 const payload = {
                     merchantId: process.env.NEXT_PUBLIC_PHONEPE_MERCHANT_ID,
                     merchantTransactionId: transactionId,

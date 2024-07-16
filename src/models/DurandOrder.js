@@ -6,6 +6,7 @@ const durandOrderSchema = new mongoose.Schema({
   match: { type: mongoose.Schema.Types.ObjectId, ref: 'Match', required: true },
   status: { type: String, default: 'PENDING' },
   amount: { type: Number, required: true },
+  baseAmount: { type: Number, required: true },
   quantity: { type: Number, required: true },
   section: { type: String, required: true },
   currency: { type: String, required: true, default: "INR" },

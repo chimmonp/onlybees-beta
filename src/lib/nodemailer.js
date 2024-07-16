@@ -44,3 +44,49 @@ export const sendEmail = async (to, subject, htmlContent, pdfBuffer, ticketId) =
         console.error('Error sending email:', error);
     }
 };
+
+
+export const sendDurandEmail = async (to, subject, htmlContent, pdfBuffer, ticketId) => {
+
+    try {
+        // Create a transporter
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail', // Use your email service
+            auth: {
+                user: process.env.NEXT_PUBLIC_DURAND_EMAIL_USER, // Your email address
+                pass: process.env.NEXT_PUBLIC_DURAND_EMAIL_PASS, // Your email password
+            },
+        });
+
+        let attachments = null;
+
+        if(ticketId){
+            attachments = [
+                {
+                    filename: `ticket_${ticketId}.pdf`,
+                    content: pdfBuffer,
+                    contentType: 'application/pdf',
+                },
+            ]
+        }
+
+        if(!htmlContent){
+            htmlContent = "A new submission has been received"
+        }
+
+        // Set email options
+        const mailOptions = {
+            from: process.env.NEXT_PUBLIC_DURAND_EMAIL_USER,
+            to,
+            subject,
+            html: htmlContent,
+            attachments: attachments,
+        };
+
+        // Send email
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent: ' + info.response);
+    } catch (error) {
+        console.error('Error sending email:', error);
+    }
+};

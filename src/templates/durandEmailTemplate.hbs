@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&display=swap"
+        rel="stylesheet">
+    <title>Booking Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5rem;
+            color: black;
+        }
+
+        .container {
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 25px 35px;
+            border-radius: 10px;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 3rem;
+            font-family: "Arimo", sans-serif;
+            font-weight: 600;
+            letter-spacing: -3px;
+            line-height: 1.5rem;
+            color: black;
+            margin-bottom: 3%;
+        }
+
+        .header {
+            /* background-color: #eeeeee; */
+            text-align: center;
+            color: #1b1b1b;
+            padding: 5%;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+        }
+
+        .view-ticket-container {
+            display: block;
+            margin-top: 8%;
+            padding: 0 5%;
+            text-align: center;
+        }
+
+        .view-ticket {
+            display: block;
+            font-size: 0.8rem;
+            padding: 2% 10%;
+            border: 1px solid black;
+            text-decoration: none;
+            color: black;
+        }
+
+        .underline {
+            text-decoration: underline;
+        }
+
+        .details-container {
+            align-items: center;
+            padding: 5% 0;
+        }
+
+        .flex-details {
+            padding-left: 5%;
+        }
+
+        .details {
+            margin: 10px 0;
+        }
+
+        .details p,
+        h2 {
+            margin: 5px 0px;
+        }
+
+        .details h2 {
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+
+        .details p {
+            font-size: 0.9rem;
+        }
+
+
+        hr {
+            border: none;
+            border-bottom: 2px solid rgb(0, 0, 0);
+        }
+
+        hr.dashed {
+            margin-left: 0;
+            border: none;
+            border-bottom: 3px dotted rgb(218, 218, 218);
+            width: 70%;
+        }
+
+        .footer-text {
+            padding: 0 5%;
+            color: #7d7d7d;
+        }
+
+        @media only screen and (max-width: 768px) {
+            .logo {
+                text-align: center;
+                font-size: 2.6rem;
+                font-family: 'Coolvetica', Arial, sans-serif;
+                line-height: 1.5rem;
+                color: black;
+                margin-bottom: 7%;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 0;
+            }
+
+            .header h2 {
+                font-size: 1rem;
+            }
+
+            .header p {
+                font-size: 0.7rem;
+                line-height: 150%;
+            }
+
+
+            .content {
+                width: 100%;
+            }
+
+            .qr-code {
+                margin: 0 auto;
+                width: 70%;
+            }
+
+            .view-ticket {
+                font-size: 0.7rem;
+                padding: 5% 5%;
+            }
+
+            .flex-details {
+                width: 100%;
+                padding-left: 5%;
+            }
+
+            .details p {
+                font-size: 0.8rem;
+                margin: 2px 0;
+            }
+
+            .footer-text {
+                font-size: 0.8rem;
+                padding-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">ONLYBEES.</div>
+        <hr>
+        <div class="header">
+            <h1>Hello {{name}},</h1>
+            <h2>Your ticket has been confirmed!</h2>
+            <p>Thank you so much for booking with us! We are excited to confirm your ticket for <b>Durand Cup 2024</b>.
+                Your
+                ticket is attached to this email. Please find the QR code and transaction details below.</p>
+        </div>
+        <hr>
+        <div class="details-container">
+            <div class="flex-details">
+                <div class="details">
+                    <h2>Payment Details</h2>
+                    <p><b>Transaction ID:</b> {{transactionId}}</p>
+                    <p><b>Date:</b> {{bookingDate}}</p>
+                    <hr class="dashed">
+                    <p><b>Subtotal:</b> INR {{baseAmt}}</p>
+                    <p><b>Convenience Fee</b>: INR {{convenienceFee}}</p>
+                    <p><b>Platform Fee</b>: INR {{platformFee}}</p>
+                    <hr class="dashed">
+                    <p><b>Total</b>: INR {{totalAmount}}</p>
+                    <hr class="dashed">
+                </div>
+                <div class="details">
+                    <h2>Match Details</h2>
+                    <p><b>{{teamA}} vs. {{teamB}}</b></p>
+                    <p><b>Venue</b>: Jawaharlal Nehru Stadium (Polo Ground)</p>
+                    <p><b>Date & Time</b>: {{matchDate}}, {{time}}</p>
+                </div>
+                <div class="details">
+                    <h2>Ticket Details</h2>
+                    <h3><b>Quantity : </b>{{quantity}}</h3>
+                    <h3><b>Entry No. : </b>{{entry}}</h3>
+                    <h3><b>Bowl : </b>{{bowl}}</h3>
+                    <h3><b>Gate No : </b>{{gate}}</h3>
+                    <hr class="dashed">
+                    <p><b>Name</b>: {{name}}</p>
+                    <p><b>Email</b>: {{email}}</p>
+                    <p><b>Mobile</b>: {{phone}}</p>
+                </div>
+            </div>
+            <div class="view-ticket-container">
+                <a class="view-ticket" href="https://onlybees.in/dashboard/my-tickets">
+                    <span><b>VIEW TICKET</b> on <span class="underline">onlybees.in</span></span>
+                </a>
+            </div>
+        </div>
+        <p class="footer-text">Feel free to contact us if you have any questions or comments! We are happy to help.
+            Contact us via <a href="mailto:admin@onlybees.in">admin@onlybees.in</a></p>
+    </div>
+    </div>
+</body>
+
+</html>

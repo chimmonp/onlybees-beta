@@ -1,4 +1,4 @@
-// src/api/transactions/route.js
+// src/api/durand-cup/save-order/route.js
 import connectMongo from '@/lib/mongodb';
 import DurandOrder from '@/models/DurandOrder';
 
@@ -6,9 +6,9 @@ export async function POST(req, res) {
     try {
         await connectMongo();
 
-        const { transactionId, userId, match, status, amount, quantity, section, currency, notes, name, phone, email } = await req.json();
+        const { transactionId, userId, match, status, amount, baseAmount, quantity, section, currency, notes, name, phone, email } = await req.json();
         
-        if (!transactionId || !userId || !match || !status || !amount || !quantity || !section || !currency || !notes || !name || !phone || !email) {
+        if (!transactionId || !userId || !match || !status || !amount || !baseAmount || !quantity || !section || !currency || !notes || !name || !phone || !email) {
             return new Response(JSON.stringify({ success: false, error: 'Missing required fields' }), { status: 400 });
         }
 
@@ -18,6 +18,7 @@ export async function POST(req, res) {
             match,
             status,
             amount,
+            baseAmount,
             quantity,
             section,
             currency,
