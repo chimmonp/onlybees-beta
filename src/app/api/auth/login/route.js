@@ -20,7 +20,7 @@ export const POST = async (req) => {
     await connectMongo();
     // Check if user exists in the database
     const user = await User.findOne({ phone: ph });
-    console.log(user);
+    // console.log(user);
     if (user) {
       const token = generateUserToken(ph);
       const cookieOptions = {

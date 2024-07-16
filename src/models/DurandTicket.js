@@ -14,4 +14,4 @@ const durandTicketSchema = new mongoose.Schema({
     isUsed: { type: Boolean, default: false },
 });
 
-export default mongoose.models.DurandTicket || mongoose.model('Ticket', durandTicketSchema);
+export default mongoose.models.DurandTicket || mongoose.model('DurandTicket', durandTicketSchema);

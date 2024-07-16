@@ -12,9 +12,11 @@ export async function POST(req, res) {
             return new Response(JSON.stringify({ success: false, error: 'Missing required fields' }), { status: 400 });
         }
 
+        console.log(transactionId, userId, match, status, amount, baseAmount, quantity, section, currency, notes, name, phone, email)
+
         const newOrder = new DurandOrder({
             transactionId,
-            userId,
+            user: userId,
             match,
             status,
             amount,

@@ -29,7 +29,7 @@ const page = () => {
         email: "",
     });
     const { user, login } = useAuth();
-    const [ph, setPh] = useState("911234567890");
+    const [ph, setPh] = useState("");
 
 
     //Change state on input change
@@ -83,7 +83,7 @@ const page = () => {
 
             const data = await res.json();
             if (data.success) {
-                // verifyUser();
+                verifyUser();
                 return true;
             }
             else {
@@ -134,9 +134,9 @@ const page = () => {
         if (user.userData) {
             // console.log(user.userData);
             setForm({
-                firstname: user.userData.firstname || null,
-                lastname: user.userData.lastname || null,
-                email: user.userData.email || null,
+                firstname: user.userData.firstname || '',
+                lastname: user.userData.lastname || '',
+                email: user.userData.email || '',
             });
             setPh(user.userData.phone)
         }
@@ -152,7 +152,7 @@ const page = () => {
 
         const orderPayload = {
             transactionId,
-            userId: user.userData?._id,
+            userId: user.userData?._id || '6671a57c0e924ab6086fbd36',
             match: durandData.matchDetails._id,
             status: "PENDING",
             amount: durandData.amount.totalAmtCalc, // example amount

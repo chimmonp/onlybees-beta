@@ -2,6 +2,7 @@ import connectMongo from '@/lib/mongodb';
 import DurandOrder from '@/models/DurandOrder';
 import DurandTicket from '@/models/DurandTicket';
 import Section from '@/models/Section';
+import Match from '@/models/Match';
 import User from '@/models/User';
 import { NextResponse } from "next/server";
 import sha256 from "crypto-js/sha256";
@@ -22,6 +23,23 @@ const generateQrCodeUrl = async (text) => {
         throw err;
     }
 };
+
+const formatDate = (date) => {
+    // Parse the date string into a Date object
+    const newDate = new Date(date);
+    // Define the offset for the target timezone (+05:30)
+    const targetOffset = 5.5 * 60; // 5.5 hours in minutes
+    // Get the current offset of the local system timezone
+    const localOffset = newDate.getTimezoneOffset(); // in minutes
+    // Calculate the total offset to apply
+    const totalOffset = targetOffset + localOffset;
+    // Apply the offset to the date
+    date.setMinutes(newDate.getMinutes() + totalOffset);
+    // Format the date to the desired string representation
+    const pad = (num) => String(num).padStart(2, '0');
+    const formattedDate = `${newDate.getFullYear()}-${pad(newDate.getMonth() + 1)}-${pad(newDate.getDate())}, ${pad(newDate.getHours())}:${pad(newDate.getMinutes())}:${pad(newDate.getSeconds())}.${String(newDate.getMilliseconds()).padStart(3, '0')}+05:30`;
+    return formattedDate; // "2024-06-16, 17:49:46.255+05:30"
+}
 
 export async function POST(req, res) {
     try {
@@ -67,15 +85,19 @@ export async function POST(req, res) {
             return new Response(JSON.stringify({ success: false, error: 'Order not found' }), { status: 404 });
         }
 
+        // console.log(order)
+
         if (response.data.code == "PAYMENT_SUCCESS") {
 
-            order.status = "SUCCESS";
-            await order.save();
+            // order.status = "SUCCESS";
+            // await order.save();
 
             const user = await User.findOne({ phone: order.phone });
             if (!user) {
                 return new Response(JSON.stringify({ success: false, error: 'User not found' }), { status: 404 });
             }
+
+            await DurandOrder.findByIdAndUpdate( order._id, { status: "SUCCESS", user: user._id})
 
             const section = await Section.findById(order.section);
             if (!section) {
@@ -95,8 +117,8 @@ export async function POST(req, res) {
                 isUsed: false,
             });
             const qrCodeUrl = await generateQrCodeUrl(newTicket._id.toString());
-            await newTicket.save();
-            await DurandTicket.findByIdAndUpdate(newTicket._id, { qrLink: qrCodeUrl });
+            // await newTicket.save();
+            // await DurandTicket.findByIdAndUpdate(newTicket._id, { qrLink: qrCodeUrl });
 
             // Update user's bookings and update event details
             const updatedMatch = await Match.findByIdAndUpdate(
@@ -124,7 +146,7 @@ export async function POST(req, res) {
                 baseAmt: order.baseAmount.toFixed(2),
                 convenienceFee: (order.baseAmount * 0.03).toFixed(2),
                 platformFee: (order.baseAmount * 0.0236).toFixed(2),
-                totalAmount: orderDetails.amount,
+                totalAmount: order.amount,
                 teamA: updatedMatch.teamA,
                 teamB: updatedMatch.teamB,
                 matchDate: updatedMatch.date,
@@ -132,7 +154,7 @@ export async function POST(req, res) {
                 gate: section.gate,
                 bowl: section.bowl,
                 time: updatedMatch.time,
-                bookingDate: order.createdAt,
+                bookingDate: formatDate(order.createdAt),
                 quantity: order.quantity,
                 transactionId: order.transactionId,
                 bookingId: order._id.toString(),
@@ -147,15 +169,15 @@ export async function POST(req, res) {
                 baseAmt: order.baseAmount.toFixed(2),
                 convenienceFee: (order.baseAmount * 0.03).toFixed(2),
                 platformFee: (order.baseAmount * 0.0236).toFixed(2),
-                totalAmount: orderDetails.amount,
+                totalAmount: order.amount,
                 teamA: updatedMatch.teamA,
                 teamB: updatedMatch.teamB,
-                matchDate: updatedMatch.date,
+                matchDate: updatedMatch.date.split()[0],
                 entry: section.entry,
                 gate: section.gate,
                 bowl: section.bowl,
                 time: updatedMatch.time,
-                bookingDate: order.createdAt,
+                bookingDate: formatDate(order.createdAt),
                 quantity: order.quantity,
                 transactionId: order.transactionId,
                 bookingId: order._id.toString(),
@@ -188,15 +210,17 @@ export async function POST(req, res) {
             });
         }
         else if (response.data.code == "PAYMENT_PENDING") {
-            order.status = "PAYMENT PENDING";
-            await order.save();
+            // order.status = "PAYMENT PENDING";
+            // await order.save();
+            await DurandOrder.findByIdAndUpdate( order._id, { status: "PAYMENT_PENDING", })
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/durand-cup/payment-pending/`, {
                 status: 301,
             });
         }
         else {
-            order.status = "PAYMENT FAILED";
-            await order.save();
+            // order.status = "PAYMENT FAILED";
+            // await order.save();
+            await DurandOrder.findByIdAndUpdate( order._id, { status: "PAYMENT_FAILED", })
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/durand-cup/failed`, {
                 // a 301 status is required to redirect from a POST to a GET route
                 status: 301,
