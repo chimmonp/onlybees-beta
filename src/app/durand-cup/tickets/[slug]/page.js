@@ -135,10 +135,10 @@ const SeatingPage = (props) => {
                         if (lastSelected) {
                             // lastSelected.setAttribute('fill', lastSelected.id.startsWith("lower") ? '#f90000' : '#003dff');
                             lastSelected.setAttribute('fill', lastSelected.id.startsWith("lower") ? '#f90000' : '#003dff');
-                            if (lastSelected.id === 'upper-bowl-4' || lastSelected.id === 'upper-bowl-5' || lastSelected.id === 'upper-bowl-7' || lastSelected.id === 'upper-bowl-8' || lastSelected.id === 'upper-bowl-9') {
+                            if (lastSelected.id === 'upper-bowl-4' || lastSelected.id === 'upper-bowl-5'  || lastSelected.id === 'upper-bowl-6' || lastSelected.id === 'upper-bowl-7' || lastSelected.id === 'upper-bowl-8' || lastSelected.id === 'upper-bowl-9') {
                                 lastSelected.setAttribute('fill', '#f2b400');
                             }
-                            else if (lastSelected.id === 'upper-bowl-9' || lastSelected.id === 'upper-bowl-6' || lastSelected.id === 'upper-bowl-3' || lastSelected.id === 'upper-bowl-1' || lastSelected.id === 'upper-bowl-2' || lastSelected.id === 'upper-bowl-11' || lastSelected.id === 'upper-bowl-10') {
+                            else if (lastSelected.id === 'upper-bowl-9' || lastSelected.id === 'upper-bowl-3' || lastSelected.id === 'upper-bowl-1' || lastSelected.id === 'upper-bowl-2' || lastSelected.id === 'upper-bowl-11' || lastSelected.id === 'upper-bowl-10') {
                                 lastSelected.setAttribute('fill', '#1baf39');
                             }
 
