@@ -21,7 +21,7 @@ const sectionSchema = new mongoose.Schema({
     availableQuantity: [
         {
             date: { type: String, required: true },
-            availableQuantity: { type: Number, required: true },
+            quantity: { type: Number, required: true },
         }
     ],
     price: {

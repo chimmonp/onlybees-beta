@@ -7,17 +7,31 @@ export const POST = async (req, res) => {
 
         const { bowl, tickets, date } = await req.json();
 
-        // Update the quantity for the specific date in the specific bowl
-        const result = await Section.updateOne(
-            { _id: bowl, 'availableQuantity.date': date },
-            { $inc: { 'availableQuantity.$.quantity': -tickets } }
-        );
+        // Find the section document
+        const section = await Section.findById(bowl);
 
-        if (result.modifiedCount === 0) {
-            return new Response(JSON.stringify({ success: false, error: 'Update Failed' }), { status: 400 });
+        if (!section) {
+            return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
         }
 
-        return new Response(JSON.stringify({ success: true }), { status: 201 });
+        // Find the corresponding date in availableQuantity
+        const dateEntry = section.availableQuantity.find(entry => entry.date === date);
+
+        if (!dateEntry) {
+            return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
+        }
+
+        // Update the quantity
+        if (dateEntry.quantity >= tickets) {
+            dateEntry.quantity -= tickets; // Reduce quantity by tickets purchased
+            
+            // Save the updated section
+            await section.save();
+
+            return new Response(JSON.stringify({ success: true }), { status: 200 });
+        } else {
+            return new Response(JSON.stringify({ success: false, error: 'Not Enough Tickets Available' }), { status: 400 });
+        }
     } catch (error) {
         console.error(error);
         return new Response(JSON.stringify({ success: false, error: 'Server Error' }), { status: 500 });
