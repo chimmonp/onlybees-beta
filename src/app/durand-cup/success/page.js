@@ -7,11 +7,11 @@ import LocalActivityIcon from '@mui/icons-material/LocalActivity';
 import ClearIcon from '@mui/icons-material/Clear';
 
 
+
 import Link from 'next/link';
 
 
 const Success = () => {
-
 
     // const options = {
     //     weekday: 'short', // Fri
@@ -30,8 +30,7 @@ const Success = () => {
                 <div className="md:w-[6svw] md:h-[6svw] w-[80px] h-[80px] rounded-full bg-[#00FF38] absolute md:-top-[5svh] md:right-[12svw] -top-[40px] left-[calc(50%-40px)] flex items-center justify-center border-8 border-white"><CheckIcon sx={{ "color": "white", "fontSize": "3rem", "fontWeight": "500" }} /></div>
                 <h1 className='mt-[3svw] text-3xl font-semibold'>Thank you!</h1>
                 <h2 className='mt-2 md:text-md text-[0.8rem]'>Your payment was successful.</h2>
-                <p className='text-xs mt-5'>A copy of the tickets has been emailed to you on</p>
-                <p className='text-xs mb-7 font-semibold underline'>gauravcodes123@gmail.com</p>
+                <p className='text-xs mt-5'>A copy of the tickets has been sent to your provided Email</p>
                 <div className='h-[50px] w-[50px] bg-white rounded-full absolute -left-[25px] -bottom-[25px]'></div>
                 <div className='h-[50px] w-[50px] bg-white rounded-full absolute -right-[25px] -bottom-[25px]'></div>
             </div>

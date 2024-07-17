@@ -123,12 +123,12 @@ const page = () => {
     useEffect(() => {
         verifyUser();
         // loadScript();
-        console.log(durandData)
+        // console.log(durandData)
     }, [])
 
-    useEffect(() => {
-        console.log(durandData)
-    }, [durandData])
+    // useEffect(() => {
+    //     console.log(durandData)
+    // }, [durandData])
 
     useEffect(() => {
         if (user.userData) {
@@ -184,7 +184,7 @@ const page = () => {
                     merchantId: process.env.NEXT_PUBLIC_PHONEPE_MERCHANT_ID,
                     merchantTransactionId: transactionId,
                     merchantUserId: 'OB-' + uuidv4().toString(36).slice(-6),
-                    amount: 200,
+                    amount: durandData.amount.totalAmtCalc * 100,
                     redirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/phonepe/status/${transactionId}`,
                     redirectMode: "POST",
                     callbackUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/phonepe/status/${transactionId}`,
@@ -193,6 +193,20 @@ const page = () => {
                         type: "PAY_PAGE",
                     },
                 };
+
+                const lockSeatsPayload = {
+                    bowl: durandData.sectionData._id,
+                    tickets: durandData.tickets,
+                    date: durandData.matchDetails.slug,
+                }
+
+                await axios.post('/api/durand-cup/lock-seats', lockSeatsPayload, {
+                    // method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    // body: JSON.stringify(orderPayload),
+                });
 
 
                 const response = await axios.post('/api/phonepe/pay', payload, {

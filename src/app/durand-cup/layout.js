@@ -1,4 +1,6 @@
 
+import Navbar from '../components/Navbar';
+
 
 //Context
 import { DurandProvider } from '@/context/DurandContext';
@@ -15,6 +17,7 @@ export default function RootLayout({ children }) {
     <div className='text-black bg-white'>
       <AuthProvider>
         <DurandProvider>
+          <Navbar mode="light" />
           {children}
         </DurandProvider>
       </AuthProvider>

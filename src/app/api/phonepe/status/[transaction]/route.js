@@ -97,7 +97,7 @@ export async function POST(req, res) {
                 return new Response(JSON.stringify({ success: false, error: 'User not found' }), { status: 404 });
             }
 
-            await DurandOrder.findByIdAndUpdate( order._id, { status: "SUCCESS", user: user._id})
+            await DurandOrder.findByIdAndUpdate(order._id, { status: "SUCCESS", user: user._id })
 
             const section = await Section.findById(order.section);
             if (!section) {
@@ -117,8 +117,23 @@ export async function POST(req, res) {
                 isUsed: false,
             });
             const qrCodeUrl = await generateQrCodeUrl(newTicket._id.toString());
-            // await newTicket.save();
-            // await DurandTicket.findByIdAndUpdate(newTicket._id, { qrLink: qrCodeUrl });
+
+            await newTicket.save();
+
+            await DurandTicket.findByIdAndUpdate(newTicket._id, { qrLink: qrCodeUrl });
+
+            const sportsBooking = {
+                match: order.match,
+                ticket: newTicket._id,
+                bookingDate: order.createdAt,
+                orderId: order._id,
+                qrLink: qrCodeUrl,
+            };
+
+            // Update the user document
+            await User.findByIdAndUpdate(user._id, {
+                $push: { sportsBookings: sportsBooking },
+            });
 
             // Update user's bookings and update event details
             const updatedMatch = await Match.findByIdAndUpdate(
@@ -126,7 +141,7 @@ export async function POST(req, res) {
                 {
                     $inc: {
                         sold: order.quantity,
-                        totalSales: order.amount - (0.0536 * order.amount),
+                        totalSales: order.baseAmount,
                     },
                 },
                 { new: true }
@@ -136,6 +151,8 @@ export async function POST(req, res) {
             if (!updatedMatch) {
                 return new Response(JSON.stringify({ success: false, error: 'Failed to update event details' }), { status: 500 });
             }
+
+
 
             // Render the ticket template
             const emailHtml = durandEmailTemplate({
@@ -172,7 +189,7 @@ export async function POST(req, res) {
                 totalAmount: order.amount,
                 teamA: updatedMatch.teamA,
                 teamB: updatedMatch.teamB,
-                matchDate: updatedMatch.date.split()[0],
+                matchDate: updatedMatch.date.split(' ')[0],
                 entry: section.entry,
                 gate: section.gate,
                 bowl: section.bowl,
@@ -212,7 +229,13 @@ export async function POST(req, res) {
         else if (response.data.code == "PAYMENT_PENDING") {
             // order.status = "PAYMENT PENDING";
             // await order.save();
-            await DurandOrder.findByIdAndUpdate( order._id, { status: "PAYMENT_PENDING", })
+
+            await Section.updateOne(
+                { _id: order.section, 'availableQuantity.date': order.date },
+                { $inc: { 'availableQuantity.$.quantity': order.quantity } }
+            );
+
+            await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_PENDING", })
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/durand-cup/payment-pending/`, {
                 status: 301,
             });
@@ -220,7 +243,13 @@ export async function POST(req, res) {
         else {
             // order.status = "PAYMENT FAILED";
             // await order.save();
-            await DurandOrder.findByIdAndUpdate( order._id, { status: "PAYMENT_FAILED", })
+
+            await Section.updateOne(
+                { _id: order.section, 'availableQuantity.date': order.date },
+                { $inc: { 'availableQuantity.$.quantity': order.quantity } }
+            );
+
+            await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_FAILED", })
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/durand-cup/failed`, {
                 // a 301 status is required to redirect from a POST to a GET route
                 status: 301,
