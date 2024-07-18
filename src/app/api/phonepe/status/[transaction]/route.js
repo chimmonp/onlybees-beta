@@ -92,17 +92,31 @@ export async function POST(req, res) {
             // order.status = "SUCCESS";
             // await order.save();
 
+            const section = await Section.findById(order.section);
+            if (!section) {
+                return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
+            }
+
+            const match = await Match.findById(order.match);
+            if (!match) {
+                return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
+            }
+
+            const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
+            if (!dateEntry) {
+                return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
+            }
+            // Update the quantity
+            dateEntry.quantity -= order.quantity; // Reduce quantity by tickets purchased
+            // Save the updated section
+            await section.save();
+
             const user = await User.findOne({ phone: order.phone });
             if (!user) {
                 return new Response(JSON.stringify({ success: false, error: 'User not found' }), { status: 404 });
             }
 
             await DurandOrder.findByIdAndUpdate(order._id, { status: "SUCCESS", user: user._id })
-
-            const section = await Section.findById(order.section);
-            if (!section) {
-                return new Response(JSON.stringify({ success: false, error: 'Section not found' }), { status: 404 });
-            }
 
             const newTicket = new DurandTicket({
                 user: user._id,
@@ -230,10 +244,29 @@ export async function POST(req, res) {
             // order.status = "PAYMENT PENDING";
             // await order.save();
 
-            await Section.updateOne(
-                { _id: order.section, 'availableQuantity.date': order.date },
-                { $inc: { 'availableQuantity.$.quantity': order.quantity } }
-            );
+            // await Section.updateOne(
+            //     { _id: order.section, 'availableQuantity.date': order.date },
+            //     { $inc: { 'availableQuantity.$.quantity': order.quantity } }
+            // );
+            const section = await Section.findById(order.section);
+            if (!section) {
+                return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
+            }
+
+            const match = await Match.findById(order.match);
+            if (!match) {
+                return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
+            }
+
+            const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
+            if (!dateEntry) {
+                return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
+            }
+            // Update the quantity
+            dateEntry.quantity += order.quantity; // Reduce quantity by tickets purchased
+            // Save the updated section
+            await section.save();
+
 
             await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_PENDING", })
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/durand-cup/payment-pending/`, {
@@ -243,11 +276,29 @@ export async function POST(req, res) {
         else {
             // order.status = "PAYMENT FAILED";
             // await order.save();
+            const section = await Section.findById(order.section);
+            if (!section) {
+                return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
+            }
 
-            await Section.updateOne(
-                { _id: order.section, 'availableQuantity.date': order.date },
-                { $inc: { 'availableQuantity.$.quantity': order.quantity } }
-            );
+            const match = await Match.findById(order.match);
+            if (!match) {
+                return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
+            }
+
+            const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
+            if (!dateEntry) {
+                return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
+            }
+            // Update the quantity
+            dateEntry.quantity += order.quantity; // Reduce quantity by tickets purchased
+            // Save the updated section
+            await section.save();
+
+            // await Section.updateOne(
+            //     { _id: order.section, 'availableQuantity.date': order.date },
+            //     { $inc: { 'availableQuantity.$.quantity': order.quantity } }
+            // );
 
             await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_FAILED", })
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/durand-cup/failed`, {

@@ -197,19 +197,19 @@ const page = () => {
                     },
                 };
 
-                const lockSeatsPayload = {
-                    bowl: durandData.sectionData._id,
-                    tickets: durandData.tickets,
-                    date: durandData.matchDetails.slug,
-                }
+                // const lockSeatsPayload = {
+                //     bowl: durandData.sectionData._id,
+                //     tickets: durandData.tickets,
+                //     date: durandData.matchDetails.slug,
+                // }
 
-                await axios.post('/api/durand-cup/lock-seats', lockSeatsPayload, {
-                    // method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    // body: JSON.stringify(orderPayload),
-                });
+                // await axios.post('/api/durand-cup/lock-seats', lockSeatsPayload, {
+                //     // method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //     },
+                //     // body: JSON.stringify(orderPayload),
+                // });
 
 
                 const response = await axios.post('/api/phonepe/pay', payload, {
