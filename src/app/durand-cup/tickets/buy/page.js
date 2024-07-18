@@ -16,6 +16,9 @@ import axios from 'axios'
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 
+import { Accordion, AccordionItem, AccordionItemHeading, AccordionItemButton, AccordionItemPanel } from 'react-accessible-accordion';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+
 const page = () => {
 
     const { durandData, setData, appendData } = useDurand();
@@ -252,7 +255,44 @@ const page = () => {
     if (durandData.length !== 0) {
         return (
             <div className='flex justify-center px-10'>
-                <div className='w-screen bg-white lg:w-1/3'>
+                <div className='w-screen bg-white lg:w-1/3 pb-40'>
+                    <div className='mt-10'>
+                        <h2 className='text-black font-semibold text-xl'>Order Summary</h2>
+                        <div className='mt-5 text-sm'>
+                            <div className='flex justify-between border-b border-gray-600 py-2'>
+                                <span>{durandData.sectionData.bowl}, {durandData.sectionData.gate}<span className='bg-black text-white text-sm font-semibold px-4 rounded-full ml-3'>x{durandData.tickets}</span></span>
+                                <span>₹{durandData.amount.subtotalAmt}</span>
+                            </div>
+                            <Accordion allowZeroExpanded>
+                                <AccordionItem key="1" className="bg-white text-black">
+                                    <AccordionItemHeading>
+                                        <AccordionItemButton className="flex justify-between items-center py-2 cursor-pointer">
+                                            <div className="flex flex-row w-full items-center justify-between">
+                                                <div className="">Booking Fees<ArrowDropDownIcon /></div>
+                                                <div>₹{durandData.amount.convFeeAmt + durandData.amount.platformFeeAmt}</div>
+                                            </div>
+                                        </AccordionItemButton>
+                                    </AccordionItemHeading>
+                                    <AccordionItemPanel className="">
+                                        <div className="flex flex-col gap-1 justify-center items-center text-slate-500 pb-3">
+                                            <div className="flex flex-row w-full items-center justify-between">
+                                                <div className="">Convenience Fees</div>
+                                                <div>₹{durandData.amount.convFeeAmt}</div>
+                                            </div>
+                                            <div className="flex flex-row w-full items-center justify-between">
+                                                <div className="">Platform Fees</div>
+                                                <div>₹{durandData.amount.platformFeeAmt}</div>
+                                            </div>
+                                        </div>
+                                    </AccordionItemPanel>
+                                </AccordionItem>
+                            </Accordion>
+                            <div className='flex text-xl justify-between font-bold border-t border-gray-600 py-2'>
+                                <span>Total</span>
+                                <span>₹{durandData.amount.totalAmtCalc}</span>
+                            </div>
+                        </div>
+                    </div>
                     <h2 className='text-black font-semibold text-xl mt-20 mb-5'>Contact information</h2>
                     <div className='flex flex-col items-center justify-center gap-10'>
                         <form className="space-y-4 md:space-y-6 md:w-full">

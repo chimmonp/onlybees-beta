@@ -20,6 +20,7 @@ import fc_goa from "../../../../../public/FC-Goa.png"
 import hyderabad_fc from "../../../../../public/Hyderabad_FC.png"
 import slfc from "../../../../../public/SLFC-LOGO.png"
 import tafc from "../../../../../public/tafc.png"
+import unannounced from "../../../../../public/unannounced.svg"
 
 
 const SeatingPage = (props) => {
@@ -124,7 +125,7 @@ const SeatingPage = (props) => {
                 const quantity = sectionData.availableQuantity[dateIndex]?.quantity || 0;
                 if (quantity > 0) {
                     section.setAttribute('fill', section.id.startsWith("lower") ? '#f90000' : '#003dff');
-                    if (section.id === 'upper-bowl-4' || section.id === 'upper-bowl-5' || section.id === 'upper-bowl-6'  || section.id === 'upper-bowl-7' || section.id === 'upper-bowl-8' || section.id === 'upper-bowl-9') {
+                    if (section.id === 'upper-bowl-4' || section.id === 'upper-bowl-5' || section.id === 'upper-bowl-6' || section.id === 'upper-bowl-7' || section.id === 'upper-bowl-8' || section.id === 'upper-bowl-9') {
                         section.setAttribute('fill', '#f2b400');
                     }
                     else if (section.id === 'upper-bowl-9' || section.id === 'upper-bowl-3' || section.id === 'upper-bowl-1' || section.id === 'upper-bowl-2' || section.id === 'upper-bowl-11' || section.id === 'upper-bowl-10') {
@@ -135,7 +136,7 @@ const SeatingPage = (props) => {
                         if (lastSelected) {
                             // lastSelected.setAttribute('fill', lastSelected.id.startsWith("lower") ? '#f90000' : '#003dff');
                             lastSelected.setAttribute('fill', lastSelected.id.startsWith("lower") ? '#f90000' : '#003dff');
-                            if (lastSelected.id === 'upper-bowl-4' || lastSelected.id === 'upper-bowl-5'  || lastSelected.id === 'upper-bowl-6' || lastSelected.id === 'upper-bowl-7' || lastSelected.id === 'upper-bowl-8' || lastSelected.id === 'upper-bowl-9') {
+                            if (lastSelected.id === 'upper-bowl-4' || lastSelected.id === 'upper-bowl-5' || lastSelected.id === 'upper-bowl-6' || lastSelected.id === 'upper-bowl-7' || lastSelected.id === 'upper-bowl-8' || lastSelected.id === 'upper-bowl-9') {
                                 lastSelected.setAttribute('fill', '#f2b400');
                             }
                             else if (lastSelected.id === 'upper-bowl-9' || lastSelected.id === 'upper-bowl-3' || lastSelected.id === 'upper-bowl-1' || lastSelected.id === 'upper-bowl-2' || lastSelected.id === 'upper-bowl-11' || lastSelected.id === 'upper-bowl-10') {
@@ -165,8 +166,9 @@ const SeatingPage = (props) => {
                         <div className='flex flex-row items-center gap-2'>
                             <Image
                                 src={clubLogo(matchDetails.teamA)}
-                                height={50}
-                                width='auto'
+                                height={40}
+                                width="auto"
+                                layout="intrinsic"
                                 alt={`${matchDetails.teamA} Logo`}
                             />
                             <p>{matchDetails.teamA}</p>
@@ -174,16 +176,25 @@ const SeatingPage = (props) => {
                         <p> vs. </p>
                         <div className='flex flex-row items-center gap-2'>
                             <p>{matchDetails.teamB}</p>
-                            <Image 
+                            <Image
                                 src={clubLogo(matchDetails.teamB)}
-                                height={50}
-                                width='auto'
+                                height={40}
+                                width="auto"
+                                layout="intrinsic"
                                 alt={`${matchDetails.teamB} Logo`}
                             />
                         </div>
                     </div>
                 </div>
                 <div className='pt-32 lg:px-10 '>
+                    <Image
+                        src={unannounced}
+                        height={15}
+                        width="auto"
+                        layout="intrinsic"
+                        alt={`Seats Information`}
+                        className='mt-5 ml-5'
+                    />
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1497.7 990.98">
                         <g id="STADIUM">
                             <g>
@@ -263,7 +274,7 @@ const SeatingPage = (props) => {
                             <path d="M1024,1030.53Z" transform="translate(-181.94 -16.23)" fill="#7f7f7f" />
                         </g>
                     </svg>
-                    <p className='text-gray-500 mt-5 text-center'>Click to select seating</p>
+                    <p className='text-gray-500 my-5 text-center'>Click to select seating</p>
                 </div>
             </div>
             <TicketInfo tickets={tickets} setTickets={setTickets} sectionData={sectionData} matchDetails={matchDetails} />
