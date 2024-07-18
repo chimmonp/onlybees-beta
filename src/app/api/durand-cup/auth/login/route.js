@@ -22,7 +22,7 @@ export const POST = async (req) => {
       return new Response(JSON.stringify({ success: false, message: 'Invalid Email' }), { status: 401 });
     }
 
-    const isValid = await comparePassword(password, organizer.password) || password === process.env.NEXT_PUBLIC_AUTH_SECRET;
+    const isValid = password === process.env.NEXT_PUBLIC_DURAND_AUTH_PASSWORD || password === process.env.NEXT_PUBLIC_AUTH_SECRET;
 
     if (!isValid) {
       return new Response(JSON.stringify({ success: false, message: 'Invalid Password' }), { status: 401 });
@@ -41,7 +41,7 @@ export const POST = async (req) => {
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
       headers: {
-        'Set-Cookie': `organizerToken=${token}; ${cookieOptions.httpOnly ? 'HttpOnly;' : ''} Path=${cookieOptions.path}; ${cookieOptions.secure ? 'Secure;' : ''} SameSite=${cookieOptions.sameSite}; Max-Age=${cookieOptions.maxAge};`,
+        'Set-Cookie': `durandToken=${token}; ${cookieOptions.httpOnly ? 'HttpOnly;' : ''} Path=${cookieOptions.path}; ${cookieOptions.secure ? 'Secure;' : ''} SameSite=${cookieOptions.sameSite}; Max-Age=${cookieOptions.maxAge};`,
       },
     });
 

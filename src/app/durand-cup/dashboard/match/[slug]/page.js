@@ -49,8 +49,14 @@ const OrganizerEvent = () => {
             console.log(data)
             setMatchDetails(data.match)
             //Sort bookings in descending
-            data.orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            setBookings(data.orders);
+            // data.orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            // Filter bookings with status "SUCCESS" only
+            const successfulBookings = data.orders.filter(order => order.status === "SUCCESS");
+            // Sort bookings in descending order
+            successfulBookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            setBookings(successfulBookings);
             // setTotalEntries(data.totalEntries);
             setTotalTickets(data.match.sold);
             setTotalSales(data.match.totalSales);
@@ -226,45 +232,45 @@ const OrganizerEvent = () => {
                                 <th className='px-3 py-3 font-medium text-sm'>Bowl</th>
                                 <th className='px-3 py-3 font-medium text-sm'>Gate</th>
                                 <th className='px-3 py-3 font-medium text-sm'>Entry</th>
-                                <th className='px-3 py-3 font-medium text-sm'>Status</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Payment Status</th>
                                 <th className='px-3 py-3 font-medium text-sm'>Ticket No</th>
                             </tr>
                         </thead>
                         <tbody className='bg-[#D9D9D9] text-black text-sm'>
 
-                        {bookings.map((booking, index) => {
+                            {bookings.map((booking, index) => {
 
-                            // const ticketTypes = booking.ticket[0].ticketDetails.map(detail => detail.ticketType).join(', ');
-                            // const totalQuantity = booking.ticket[0].ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0);
-                            let stat
-                            if(booking.status === 'PAYMENT_PENDING')
-                                stat="PENDING"
-                            else if(booking.status === 'PENDING')
-                                stat="PENDING"
-                            else if(booking.status === 'SUCCESS')
-                                stat="SUCCESS"
-                            else
-                                stat=booking.status
+                                // const ticketTypes = booking.ticket[0].ticketDetails.map(detail => detail.ticketType).join(', ');
+                                // const totalQuantity = booking.ticket[0].ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0);
+                                let stat
+                                if (booking.status === 'PAYMENT_PENDING')
+                                    stat = "PENDING"
+                                else if (booking.status === 'PENDING')
+                                    stat = "PENDING"
+                                else if (booking.status === 'SUCCESS')
+                                    stat = "SUCCESS"
+                                else
+                                    stat = booking.status
 
-                            return (
-                                <tr key={booking._id} className='text-left border-b border-gray-400 border-opacity-25'>
-                                    <td className='px-3'>{booking.name || 'undefined'}</td>
-                                    <td className='px-3'>{booking.email || 'undefined'}</td>
-                                    <td className='px-3'>{booking.phone || 'undefined'}</td>
-                                    <td className='px-3'>{booking.amount}</td>
-                                    {/* <td className={`${booking.ticket[0].isUsed ? 'text-[#1baf39]' : 'text-[#bd3a2e]'} text-center px-3`}>{booking.ticket[0].isUsed ? 'Yes' : 'No'}</td> */}
-                                    <td className='px-3'>{new Date(booking.createdAt).toLocaleString()}</td>
-                                    <td className='text-center px-3'>{booking.quantity}</td>
-                                    <td className='px-3'>{booking.sectionInfo.bowl}</td>
-                                    <td className='px-3'>{booking.sectionInfo.gate}</td>
-                                    <td className='px-3'>{booking.sectionInfo.entry}</td>
-                                    <td className={`px-3 ${stat==="SUCCESS" ? "text-[#1baf39]" : "text-[#de0a26]"}`}>{stat}</td>
-                                    <td className='py-2 px-2 text-wrap font-mono'>{booking._id}</td>
-                                </tr>
-                            )
-                        }
-                        )}
-                        {/* {(filteredBookings.length !== 0) && filteredBookings.map((booking, index) => {
+                                return (
+                                    <tr key={booking._id} className='text-left border-b border-gray-400 border-opacity-25'>
+                                        <td className='px-3'>{booking.name || 'undefined'}</td>
+                                        <td className='px-3'>{booking.email || 'undefined'}</td>
+                                        <td className='px-3'>{booking.phone || 'undefined'}</td>
+                                        <td className='px-3'>{booking.amount}</td>
+                                        {/* <td className={`${booking.ticket[0].isUsed ? 'text-[#1baf39]' : 'text-[#bd3a2e]'} text-center px-3`}>{booking.ticket[0].isUsed ? 'Yes' : 'No'}</td> */}
+                                        <td className='px-3'>{new Date(booking.createdAt).toLocaleString()}</td>
+                                        <td className='text-center px-3'>{booking.quantity}</td>
+                                        <td className='px-3'>{booking.sectionInfo.bowl}</td>
+                                        <td className='px-3'>{booking.sectionInfo.gate}</td>
+                                        <td className='px-3'>{booking.sectionInfo.entry}</td>
+                                        <td className={`px-3 ${stat === "SUCCESS" ? "text-[#1baf39]" : "text-[#de0a26]"}`}>{stat}</td>
+                                        <td className='py-2 px-2 text-wrap font-mono'>{booking._id}</td>
+                                    </tr>
+                                )
+                            }
+                            )}
+                            {/* {(filteredBookings.length !== 0) && filteredBookings.map((booking, index) => {
 
                             const ticketTypes = booking.ticket[0].ticketDetails.map(detail => detail.ticketType).join(', ');
                             const totalQuantity = booking.ticket[0].ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0);
@@ -284,16 +290,72 @@ const OrganizerEvent = () => {
                             )
                         }
                         )} */}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
 
-            </div>
+                </div>
                 {
-            // (filteredBookings.length === 0) && <div className='mt-5 flex gap-2'>
-            //     <button className={`text-black py-1 px-4 rounded-sm ${(currentPage === 1) ? "bg-[#555555] opacity-80 cursor-not-allowed" : "bg-white"}`} onClick={prevPage} disabled={currentPage === 1}>Previous</button>
-            //     <button className={`text-black py-1 px-4 rounded-sm ${(currentPage === totalPages) ? "bg-[#555555] opacity-80 cursor-not-allowed" : "bg-white"}`} onClick={nextPage} disabled={currentPage === totalPages}>Next</button>
-            // </div>
-        }
+                    // (filteredBookings.length === 0) && <div className='mt-5 flex gap-2'>
+                    //     <button className={`text-black py-1 px-4 rounded-sm ${(currentPage === 1) ? "bg-[#555555] opacity-80 cursor-not-allowed" : "bg-white"}`} onClick={prevPage} disabled={currentPage === 1}>Previous</button>
+                    //     <button className={`text-black py-1 px-4 rounded-sm ${(currentPage === totalPages) ? "bg-[#555555] opacity-80 cursor-not-allowed" : "bg-white"}`} onClick={nextPage} disabled={currentPage === totalPages}>Next</button>
+                    // </div>
+                }
+            </div >
+        )
+    }
+    else if (bookings.length === 0 && matchDetails) {
+        return (
+            <div className='px-10 pb-10 md:w-[80svw] w-screen'>
+                <h1 className='font-coolvetica text-2xl'>DASHBOARD</h1>
+                <p className='text-3xl'>{matchDetails.teamA} vs. {matchDetails.teamB}</p>
+                <p className='text-sm'>Match</p>
+                <div className='mt-10 grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-5'>
+                    <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 md:px-5 px-1 rounded-lg'>
+                        <p className='font-medium text-lg'>{matchDetails.totalSales}</p>
+                        <p className='text-[#555555]'>Total Sales in INR</p>
+                    </div>
+                    <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 px-5 rounded-lg'>
+                        <p className='font-medium text-lg'>{matchDetails.sold}</p>
+                        <p className='text-[#555555]'>Total Tickets</p>
+                    </div>
+
+                </div>
+                <div className='flex md:flex-row flex-col md:justify-between md:items-center justify-start items-start'>
+                    <div className='flex md:flex-row flex-col gap-5 mt-5'>
+                        <CSVLink data={csvData} headers={csvHeaders} filename={`match_${pathname}_bookings.csv`} className="w-fit">
+                            <p className='bg-[#00FF36] text-black px-7 py-1 rounded-md font-semibold'>Download CSV</p>
+                        </CSVLink>
+                    </div>
+                </div>
+                <p className='text-xs mt-1'>Show Entries</p>
+
+                <div className='mt-10 overflow-x-scroll'>
+                    <table className='min-w-full'>
+                        <thead className='bg-[#555555]'>
+                            <tr className='text-left'>
+                                <th className='px-3 py-3 font-medium text-sm'>Name</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Email</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Mobile</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Amount</th>
+                                {/* <th className='px-3 py-3 font-medium text-sm'>Check-in</th> */}
+                                <th className='px-3 py-3 font-medium text-sm'>Date</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Tickets</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Bowl</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Gate</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Entry</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Payment Status</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Order No</th>
+                            </tr>
+                        </thead>
+                        <tbody className='bg-[#D9D9D9] text-black text-sm'>
+                            <tr key={1} className='text-left border-b border-gray-400 border-opacity-25'>
+                                <td className='px-3'>No bookings yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
             </div >
         )
     }

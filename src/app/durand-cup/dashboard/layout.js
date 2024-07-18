@@ -29,13 +29,14 @@ const OrganzerLayout = ({ children }) => {
 
   const verifyUser = async () => {
     try {
-      const res = await fetch('/api/organizer/auth/verify', {
+      const res = await fetch('/api/durand-cup/auth/verify', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
 
       if (res.ok) {
         const data = await res.json();
+        console.log(data.organizer)
         loginOrganizer(data.organizer);
         setLoading(false);
       } else {
@@ -60,7 +61,7 @@ const OrganzerLayout = ({ children }) => {
   const handleLogout = async () => {
     setLogoutModal(false);
     try {
-      const res = await fetch('/api/organizer/auth/logout', {
+      const res = await fetch('/api/durand-cup/auth/logout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });

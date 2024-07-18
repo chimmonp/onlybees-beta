@@ -17,7 +17,7 @@ export const POST = async (req) => {
       return new Response(JSON.stringify({ success: true, message: 'Logged out successfully' }), {
         status: 200,
         headers: {
-          'Set-Cookie': `organizerToken=; ${cookieOptions.httpOnly ? "HttpOnly;" : ""} Max-Age=${cookieOptions.maxAge}; Path=${cookieOptions.path}; ${cookieOptions.secure ? 'Secure;' : ''} SameSite=${cookieOptions.sameSite};`,
+          'Set-Cookie': `durandToken=; ${cookieOptions.httpOnly ? "HttpOnly;" : ""} Max-Age=${cookieOptions.maxAge}; Path=${cookieOptions.path}; ${cookieOptions.secure ? 'Secure;' : ''} SameSite=${cookieOptions.sameSite};`,
         },
       });
   

@@ -11,7 +11,7 @@ export const GET = async (req) => {
 
     let token;
     try {
-      token = await req.cookies._parsed.get('organizerToken').value;
+      token = await req.cookies._parsed.get('durandToken').value;
     } catch (err) {
       console.error('Error extracting token:');
       return new Response(JSON.stringify({ success: false, message: 'Unauthorized! No token' }), { status: 401 });

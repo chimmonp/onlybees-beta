@@ -22,7 +22,7 @@ export default function LoginPage() {
 
   const verifyUser = async () => {
     try {
-      const res = await fetch('/api/organizer/auth/verify', {
+      const res = await fetch('/api/durand-cup/auth/verify', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -50,7 +50,7 @@ export default function LoginPage() {
     setErrorMessage(''); // Reset error message
     // console.log(email, password)
     try {
-      const res = await fetch('/api/organizer/auth/login', {
+      const res = await fetch('/api/durand-cup/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

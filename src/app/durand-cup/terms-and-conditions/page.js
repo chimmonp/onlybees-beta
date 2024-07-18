@@ -1,7 +1,6 @@
 import React from 'react';
-import Link from 'next/link';
 
-const Terms = () => {
+const TicketTerms = () => {
   return (
     <div className='bg-white text-black min-h-screen'>
       <div className='pt-10 pb-20 px-10'>
@@ -30,24 +29,24 @@ const Terms = () => {
           <li className='mb-2'>Commercial photography, audio or video recordings are strictly prohibited.</li>
           <li className='mb-2'>Smoking and drinking of alcoholic substances at the venue is strictly prohibited.</li>
           <li className='mb-2'>
-            DFTS reserves the right, without prior notice, to make alterations to the time, date, seating arrangement,
-            and venue of the competition. The same may be confirmed by the ticket holders from the official website and
-            social media handles.
+            DOC and MFA reserves the right, without prior notice, to make alterations to the time, date, seating
+            arrangement, and venue of the competition. The same may be confirmed by the ticket holders from the
+            official website and social media handles.
           </li>
           <li className='mb-2'>
-            DFTS reserves the right without refund or compensation to refuse admission or evict any person(s) whose
-            conduct is deemed disorderly or inappropriate or who poses a threat to security or the enjoyment of the
-            services by others.
+            DOC and MFA reserves the right without refund or compensation to refuse admission or evict any person(s)
+            whose conduct is deemed disorderly or inappropriate or who poses a threat to security or the enjoyment of
+            the services by others.
           </li>
           <li className='mb-2'>
             Ticket holders expressly consent to the recording or photography of their image, voice, and/or likeness and
-            agree to the use by DFTS, its agent, and partners in perpetuity in any and all media for any purposes
+            agree to the use which the DFTS, its agent and partners in perpetuity in any and all media for any purposes
             throughout the world without payment of compensation.
           </li>
           <li className='mb-2'>
-            To the extent permitted by law, DFTS, Local Organising Committee, and venue management exclude any liability
-            (including for injury, death, or loss or damage to personal property) howsoever arising in connection with a
-            match.
+            To the extent permitted by law, the DC-OC and MFA, Local Organising Committee, and venue management exclude
+            any liability (including for lost, personal stolen or injury, death damaged or loss damage to personal
+            property) howsoever arising in connection with a match, property which is lost, stolen or damaged.
           </li>
           <li className='mb-2'>
             The ticket terms and conditions may be amended from time to time to reflect changes in the rules of
@@ -60,4 +59,4 @@ const Terms = () => {
   );
 };
 
-export default Terms;
+export default TicketTerms;

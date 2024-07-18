@@ -222,56 +222,138 @@ const OrganizerEvent = () => {
                                 </td>
                             </tr>}
 
-                        {(filteredBookings.length === 0) && displayedBookings.map((booking, index) => {
+                            {(filteredBookings.length === 0) && displayedBookings.map((booking, index) => {
 
-                            const ticketTypes = booking.ticket[0].ticketDetails.map(detail => detail.ticketType).join(', ');
-                            const totalQuantity = booking.ticket[0].ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0);
+                                const ticketTypes = booking.ticket[0].ticketDetails.map(detail => detail.ticketType).join(', ');
+                                const totalQuantity = booking.ticket[0].ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0);
 
-                            return (
-                                <tr key={booking.ticket[0]._id} className='text-left border-b border-gray-400 border-opacity-25'>
-                                    <td className='px-3'>{booking.name || 'undefined'}</td>
-                                    <td className='py-2 px-2 text-wrap font-mono'>{booking.ticket[0]._id}</td>
-                                    <td className='px-3'>{booking.email || 'undefined'}</td>
-                                    <td className='px-3'>{booking.phone || 'undefined'}</td>
-                                    <td className='px-3'>{booking.amount}</td>
-                                    <td className={`${booking.ticket[0].isUsed ? 'text-[#1baf39]' : 'text-[#bd3a2e]'} text-center px-3`}>{booking.ticket[0].isUsed ? 'Yes' : 'No'}</td>
-                                    <td className='px-3'>{new Date(booking.ticket[0].bookingDate).toLocaleString()}</td>
-                                    <td className='text-center px-3'>{totalQuantity}</td>
-                                    <td className='px-3'>{ticketTypes}</td>
-                                </tr>
-                            )
-                        }
-                        )}
-                        {(filteredBookings.length !== 0) && filteredBookings.map((booking, index) => {
+                                return (
+                                    <tr key={booking.ticket[0]._id} className='text-left border-b border-gray-400 border-opacity-25'>
+                                        <td className='px-3'>{booking.name || 'undefined'}</td>
+                                        <td className='py-2 px-2 text-wrap font-mono'>{booking.ticket[0]._id}</td>
+                                        <td className='px-3'>{booking.email || 'undefined'}</td>
+                                        <td className='px-3'>{booking.phone || 'undefined'}</td>
+                                        <td className='px-3'>{booking.amount}</td>
+                                        <td className={`${booking.ticket[0].isUsed ? 'text-[#1baf39]' : 'text-[#bd3a2e]'} text-center px-3`}>{booking.ticket[0].isUsed ? 'Yes' : 'No'}</td>
+                                        <td className='px-3'>{new Date(booking.ticket[0].bookingDate).toLocaleString()}</td>
+                                        <td className='text-center px-3'>{totalQuantity}</td>
+                                        <td className='px-3'>{ticketTypes}</td>
+                                    </tr>
+                                )
+                            }
+                            )}
+                            {(filteredBookings.length !== 0) && filteredBookings.map((booking, index) => {
 
-                            const ticketTypes = booking.ticket[0].ticketDetails.map(detail => detail.ticketType).join(', ');
-                            const totalQuantity = booking.ticket[0].ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0);
+                                const ticketTypes = booking.ticket[0].ticketDetails.map(detail => detail.ticketType).join(', ');
+                                const totalQuantity = booking.ticket[0].ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0);
 
-                            return (
-                                <tr key={booking.ticket[0]._id} className='text-left'>
-                                    <td className='px-3'>{booking.name || 'undefined'}</td>
-                                    <td className='py-2 px-2 text-wrap font-mono'>{booking.ticket[0]._id}</td>
-                                    <td className='px-3'>{booking.email || 'undefined'}</td>
-                                    <td className='px-3'>{booking.phone || 'undefined'}</td>
-                                    <td className='px-3'>{booking.amount}</td>
-                                    <td className={`${booking.ticket[0].isUsed ? 'text-[#1baf39]' : 'text-[#bd3a2e]'} text-center px-3`}>{booking.ticket[0].isUsed ? 'Yes' : 'No'}</td>
-                                    <td className='px-3'>{new Date(booking.ticket[0].bookingDate).toLocaleString()}</td>
-                                    <td className='text-center px-3'>{totalQuantity}</td>
-                                    <td className='px-3'>{ticketTypes}</td>
-                                </tr>
-                            )
-                        }
-                        )}
-                    </tbody>
-                </table>
+                                return (
+                                    <tr key={booking.ticket[0]._id} className='text-left'>
+                                        <td className='px-3'>{booking.name || 'undefined'}</td>
+                                        <td className='py-2 px-2 text-wrap font-mono'>{booking.ticket[0]._id}</td>
+                                        <td className='px-3'>{booking.email || 'undefined'}</td>
+                                        <td className='px-3'>{booking.phone || 'undefined'}</td>
+                                        <td className='px-3'>{booking.amount}</td>
+                                        <td className={`${booking.ticket[0].isUsed ? 'text-[#040504]' : 'text-[#bd3a2e]'} text-center px-3`}>{booking.ticket[0].isUsed ? 'Yes' : 'No'}</td>
+                                        <td className='px-3'>{new Date(booking.ticket[0].bookingDate).toLocaleString()}</td>
+                                        <td className='text-center px-3'>{totalQuantity}</td>
+                                        <td className='px-3'>{ticketTypes}</td>
+                                    </tr>
+                                )
+                            }
+                            )}
+                        </tbody>
+                    </table>
 
-            </div>
+                </div>
                 {
-            (filteredBookings.length === 0) && <div className='mt-5 flex gap-2'>
-                <button className={`text-black py-1 px-4 rounded-sm ${(currentPage === 1) ? "bg-[#555555] opacity-80 cursor-not-allowed" : "bg-white"}`} onClick={prevPage} disabled={currentPage === 1}>Previous</button>
-                <button className={`text-black py-1 px-4 rounded-sm ${(currentPage === totalPages) ? "bg-[#555555] opacity-80 cursor-not-allowed" : "bg-white"}`} onClick={nextPage} disabled={currentPage === totalPages}>Next</button>
-            </div>
-        }
+                    (filteredBookings.length === 0) && <div className='mt-5 flex gap-2'>
+                        <button className={`text-black py-1 px-4 rounded-sm ${(currentPage === 1) ? "bg-[#555555] opacity-80 cursor-not-allowed" : "bg-white"}`} onClick={prevPage} disabled={currentPage === 1}>Previous</button>
+                        <button className={`text-black py-1 px-4 rounded-sm ${(currentPage === totalPages) ? "bg-[#555555] opacity-80 cursor-not-allowed" : "bg-white"}`} onClick={nextPage} disabled={currentPage === totalPages}>Next</button>
+                    </div>
+                }
+            </div >
+        )
+    }
+    else if (bookings.length === 0 && eventDetails) {
+        return (
+            <div className='px-10 pb-10 md:w-[80svw] w-screen'>
+                <h1 className='font-coolvetica text-2xl'>DASHBOARD</h1>
+                <p className='text-3xl'>{eventDetails.title}</p>
+                <p className='text-sm'>Event</p>
+                <div className='mt-10 grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-5'>
+                    <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 md:px-5 px-1 rounded-lg'>
+                        <p className='font-medium text-lg'>{eventDetails.totalSales}</p>
+                        <p className='text-[#555555]'>Total Sales in INR</p>
+                    </div>
+                    <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 px-5 rounded-lg'>
+                        <p className='font-medium text-lg'>{eventDetails.ticketsSold}</p>
+                        <p className='text-[#555555]'>Total Tickets</p>
+                    </div>
+                    <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 px-5 rounded-lg'>
+                        <p className='font-medium text-lg'>{totalCheckIns}/{totalEntries}</p>
+                        <p className='text-[#555555]'>Check-Ins</p>
+                    </div>
+                    {/* <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 px-5 rounded-lg'>
+                        <p className='font-medium text-lg'>0</p>
+                        <p className='text-[#555555]'>Total Refunds in INR</p>
+                    </div> */}
+                    <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 px-5 rounded-lg'>
+                        <p className='font-medium text-lg'>{totalEntries}</p>
+                        <p className='text-[#555555]'>Total Orders</p>
+                    </div>
+                    {/* <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 px-5 rounded-lg'>
+                        <p className='font-medium text-lg'>0</p>
+                        <p className='text-[#555555]'>Refund Orders</p>
+                    </div> */}
+                </div>
+                <div className='flex md:flex-row flex-col md:justify-between md:items-center justify-start items-start'>
+                    <select id="entries" className='bg-[#D9D9D9] w-[100px] mt-5 px-2 rounded-md py-1 text-black font-medium' value={entries} onChange={handleEntriesChange}>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </select>
+                    <div className='flex md:flex-row flex-col gap-5 mt-5'>
+                        <CSVLink data={csvData} headers={csvHeaders} filename={`event_${eventId}_bookings.csv`} className="w-fit">
+                            <p className='bg-[#00FF36] text-black px-7 py-1 rounded-md font-semibold'>Download CSV</p>
+                        </CSVLink>
+                        <div className='flex flex-row items-center gap-3'>
+                            <input
+                                type="search"
+                                name="searchEntry"
+                                id="searchEntry"
+                                placeholder='Search '
+                                value={searchEntry}
+                                onChange={handleSearchEntry}
+                                className='bg-black px-2  py-1 font-medium border-b border-white'
+                            />
+                            <SearchIcon className='cursor-pointer' onClick={handleSearch} />
+                        </div>
+                    </div>
+                </div>
+                <p className='text-xs mt-1'>Show Entries</p>
+                <div className='mt-10 overflow-x-scroll'>
+                    <table className='min-w-full'>
+                        <thead className='bg-[#555555]'>
+                            <tr className='text-left'>
+                                <th className='px-3 py-3 font-medium text-sm'>Name</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Ticket No</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Email</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Mobile</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Amount</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Check-in</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Date</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Tickets</th>
+                                <th className='px-3 py-3 font-medium text-sm'>Ticket Type</th>
+                            </tr>
+                        </thead>
+                        <tbody className='bg-[#D9D9D9] text-black text-sm'>
+                            <td colSpan="9" className='text-center py-5 text-gray-500'>
+                                No bookings available
+                            </td>
+                        </tbody>
+                    </table>
+                </div>
             </div >
         )
     }
