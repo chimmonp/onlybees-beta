@@ -193,7 +193,7 @@ const SeatingPage = (props) => {
                         width="auto"
                         layout="intrinsic"
                         alt={`Seats Information`}
-                        className='mt-5 ml-5'
+                        className='mb-5 ml-5'
                     />
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1497.7 990.98">
                         <g id="STADIUM">

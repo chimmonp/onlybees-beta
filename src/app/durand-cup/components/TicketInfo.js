@@ -82,6 +82,11 @@ const TicketInfo = ({ tickets, setTickets, sectionData, matchDetails }) => {
                         <p>{sectionData.gate}</p>
                     </div>
                 </div>}
+                <Link href="/durand-cup/terms-and-conditions/" target='_blank' rel='noopener noreferrer'>
+                    <div className='text-black bg-[#D9D9D9] py-2 px-5 w-fit mt-5 rounded-lg cursor-pointer border border-black'>
+                        <p className='text-xs'>Terms and conditions</p>
+                    </div>
+                </Link>
             </div>
             <div className=' lg:py-0 py-3 lg:relative fixed bottom-0 lg:w-auto w-screen bg-white px-5'>
                 <div className='bg-[#D9D9D9] py-4 rounded-md text-2xl font-semibold'>
