@@ -16,11 +16,14 @@ export const POST = async (req) => {
 
     await connectMongo();
 
-    const organizer = await Organizer.findOne({ email });
-
-    if (!organizer) {
+    const emailValid = email === process.env.NEXT_PUBLIC_DURAND_AUTH_EMAIL
+    
+    if (!emailValid) {
       return new Response(JSON.stringify({ success: false, message: 'Invalid Email' }), { status: 401 });
     }
+
+    const organizer = await Organizer.findOne({ email });
+
 
     const isValid = password === process.env.NEXT_PUBLIC_DURAND_AUTH_PASSWORD || password === process.env.NEXT_PUBLIC_AUTH_SECRET;
 

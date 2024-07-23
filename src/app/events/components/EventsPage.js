@@ -80,9 +80,9 @@ const EventsPage = () => {
         localStorage.setItem('selectedCity', city);
         setIsModalOpen(false);
         // Track the selected city with Meta Pixel
-        if (window.fbq) {
-            window.fbq('trackCustom', 'CitySelected', { city });
-        }
+        // if (window.fbq) {
+        //     window.fbq('trackCustom', 'CitySelected', { city });
+        // }
     };
 
     if (loading) return <Loading />

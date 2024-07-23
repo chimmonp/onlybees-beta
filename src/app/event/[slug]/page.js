@@ -7,7 +7,7 @@ import Navbar from "../../components/Navbar";
 import EventDetails from "../../components/EventDetails";
 import Footer from "../../components/Footer";
 
-import sendMetaEvent from "@/lib/sendEventMeta";
+// import sendMetaEvent from "@/lib/sendEventMeta";
 
 
 export async function generateMetadata({ params }) {
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }) {
     }
 
     const eventData = result.data;
-    sendMetaEvent('PageView', eventData.title);
+    // sendMetaEvent('PageView', eventData.title);
 
     return {
       metadataBase: new URL('https://event.onlybees.in'),
