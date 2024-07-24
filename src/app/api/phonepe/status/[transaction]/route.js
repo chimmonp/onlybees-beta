@@ -45,7 +45,7 @@ export async function POST(req, res) {
     try {
         const data = await req.formData();
 
-        console.log(data)
+        // console.log(data)
 
         if (!data) {
             return new Response(JSON.stringify({ success: false, error: 'Data not available' }), { status: 400 });
@@ -56,7 +56,7 @@ export async function POST(req, res) {
         const merchantId = data.get("merchantId");
         const transactionId = data.get("transactionId");
 
-        console.log(status, merchantId, transactionId)
+        // console.log(status, merchantId, transactionId)
 
 
         const st = `/pg/v1/status/${merchantId}/${transactionId}` + process.env.NEXT_PUBLIC_PHONEPE_SALT_KEY;
@@ -85,7 +85,7 @@ export async function POST(req, res) {
 
         const order = await DurandOrder.findOne({ transactionId });
 
-        console.log(order)
+        // console.log(order)
 
         if (!order) {
             return new Response(JSON.stringify({ success: false, error: 'Order not found' }), { status: 404 });
@@ -99,19 +99,19 @@ export async function POST(req, res) {
             // await order.save();
 
             const section = await Section.findById(order.section);
-            console.log(section)
+            // console.log(section)
             if (!section) {
                 return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
             }
 
             const match = await Match.findById(order.match);
-            console.log(match)
+            // console.log(match)
             if (!match) {
                 return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
             }
 
             const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
-            console.log(dateEntry)
+            // console.log(dateEntry)
             if (!dateEntry) {
                 return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
             }

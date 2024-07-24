@@ -1,5 +1,5 @@
 
-import Navbar from '../components/Navbar';
+import DurandNavbar from './components/DurandNavbar';
 
 
 //Context
@@ -8,7 +8,7 @@ import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata = {
   title: "Onlybees Sports",
-  description: "Book tickets for Durand Cup 2024 on Onlybees",
+  description: "Get your tickets for the prestigious Durand Cup 2024 on Onlybees. Experience the thrill of live football matches and be a part of the oldest football tournament in Asia. Book now for the best seats and exclusive offers!",
   author: "Gaurav Joshi"
 };
 
@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
     <div className='text-black bg-white'>
       <AuthProvider>
         <DurandProvider>
-          <Navbar mode="light" />
+          <DurandNavbar mode="light" />
           {children}
         </DurandProvider>
       </AuthProvider>
