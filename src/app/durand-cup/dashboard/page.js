@@ -29,20 +29,28 @@ const Organizer = ({ }) => {
 
     const fetchAllMatches = async () => {
         try {
+            setLoading(true)
             const response = await fetch(`/api/durand-cup/allmatches`);
-            if (!response.ok) throw new Error('Failed to fetch data');
+            if (!response.ok)
+                throw new Error('Failed to fetch data');
             const data = await response.json();
             setMatches(data.matches);
+            setLoading(false)
         } catch (error) {
             console.error('Error fetching all Sections:', error);
+            setLoading(false)
         }
     };
 
     useEffect(() => {
         fetchAllMatches();
+        const interval = setInterval(() => {
+            fetchAllMatches();
+        }, 60000); // Poll every 60 seconds
+        return () => clearInterval(interval); // Cleanup on component unmount
     }, []);
 
-    if (loading)
+    if (loading || matches.length === 0)
         return <Loading />
 
     if (matches.length !== 0) {

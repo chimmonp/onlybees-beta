@@ -230,21 +230,6 @@ export async function POST(req, res) {
             // Send the email with PDF and QR code attachments
             await sendDurandEmail(order.email, `Booking Confirmation & Tickets - Durand Cup`, emailHtml, pdfBuffer, newTicket._id);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/durand-cup/success/`, {
                 status: 301,
             });
@@ -257,24 +242,24 @@ export async function POST(req, res) {
             //     { _id: order.section, 'availableQuantity.date': order.date },
             //     { $inc: { 'availableQuantity.$.quantity': order.quantity } }
             // );
-            const section = await Section.findById(order.section);
-            if (!section) {
-                return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
-            }
+            // const section = await Section.findById(order.section);
+            // if (!section) {
+            //     return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
+            // }
 
-            const match = await Match.findById(order.match);
-            if (!match) {
-                return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
-            }
+            // const match = await Match.findById(order.match);
+            // if (!match) {
+            //     return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
+            // }
 
-            const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
-            if (!dateEntry) {
-                return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
-            }
+            // const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
+            // if (!dateEntry) {
+            //     return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
+            // }
             // Update the quantity
-            dateEntry.quantity += order.quantity; // Reduce quantity by tickets purchased
-            // Save the updated section
-            await section.save();
+            // dateEntry.quantity += order.quantity; // Reduce quantity by tickets purchased
+            // // Save the updated section
+            // await section.save();
 
 
             await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_PENDING", })
@@ -285,24 +270,24 @@ export async function POST(req, res) {
         else {
             // order.status = "PAYMENT FAILED";
             // await order.save();
-            const section = await Section.findById(order.section);
-            if (!section) {
-                return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
-            }
+            // const section = await Section.findById(order.section);
+            // if (!section) {
+            //     return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
+            // }
 
-            const match = await Match.findById(order.match);
-            if (!match) {
-                return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
-            }
+            // const match = await Match.findById(order.match);
+            // if (!match) {
+            //     return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
+            // }
 
-            const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
-            if (!dateEntry) {
-                return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
-            }
+            // const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
+            // if (!dateEntry) {
+            //     return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
+            // }
             // Update the quantity
-            dateEntry.quantity += order.quantity; // Reduce quantity by tickets purchased
+            // dateEntry.quantity += order.quantity; // Reduce quantity by tickets purchased
             // Save the updated section
-            await section.save();
+            // await section.save();
 
             // await Section.updateOne(
             //     { _id: order.section, 'availableQuantity.date': order.date },
