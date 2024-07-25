@@ -45,7 +45,7 @@ const OrganizerEvent = () => {
                 throw new Error('Failed to fetch data');
             }
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             setMatchDetails(data.match);
 
             // Filter bookings with status "SUCCESS" only
@@ -55,8 +55,8 @@ const OrganizerEvent = () => {
 
             setBookings(successfulBookings);
             setTotalEntries(successfulBookings.length);
-            setTotalTickets(data.match.sold);
-            setTotalSales(data.match.totalSales);
+            // setTotalTickets(data.match.sold);
+            // setTotalSales(data.match.totalSales);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching bookings:', error);
@@ -64,10 +64,38 @@ const OrganizerEvent = () => {
         }
     };
 
+    const fetchSales = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch(`/api/durand-cup/salesinfo?slug=${pathname}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch data');
+            }
+            const data = await response.json();
+            // console.log(data);
+            // setMatchDetails(data.match);
+
+            // Filter bookings with status "SUCCESS" only
+            // const successfulBookings = data.orders.filter(order => order.status === "SUCCESS");
+            // Sort bookings in descending order
+            // successfulBookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            // setBookings(successfulBookings);
+            // setTotalEntries(data.data.totalQuantity);
+            setTotalTickets(data.data.totalQuantity);
+            setTotalSales(data.data.totalBaseAmount);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching bookings:', error);
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         setMatchId(pathname);
         fetchBookings();
-        console.log(pathname);
+        fetchSales()
+        // console.log(pathname);
     }, [pathname]);
 
     useEffect(() => {
@@ -166,11 +194,11 @@ const OrganizerEvent = () => {
             <p className='text-sm'>Match</p>
             <div className='mt-10 grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-5'>
                 <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 md:px-5 px-1 rounded-lg'>
-                    <p className='font-medium text-lg'>{matchDetails.totalSales}</p>
+                    <p className='font-medium text-lg'>{totalSales}</p>
                     <p className='text-[#555555]'>Total Sales in INR</p>
                 </div>
                 <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 px-5 rounded-lg'>
-                    <p className='font-medium text-lg'>{matchDetails.sold}</p>
+                    <p className='font-medium text-lg'>{totalTickets}</p>
                     <p className='text-[#555555]'>Total Tickets</p>
                 </div>
             </div>
