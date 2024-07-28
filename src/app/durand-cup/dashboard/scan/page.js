@@ -2,19 +2,19 @@
 
 import React, { useState } from 'react';
 // import QrScanner from 'react-qr-scanner';
-// import QrReader from 'modern-react-qr-reader'
+import QrReader from 'modern-react-qr-reader'
 
-import { useOrganizer } from "@/context/OrganizerContext"
+// import { useOrganizer } from "@/context/OrganizerContext"
 
 
 
-const NotAllowed = ({ eventDetails, handleCancel }) => {
+const NotAllowed = ({ matchDetails, handleCancel }) => {
     return (
         <div className="modal bg-white text-black py-10 px-5 text-left">
             <div className="modal-content">
                 <p className='mb-4'>Not Allowed!</p>
-                <h2 className='mb-4 text-xl font-extralight text-[#bd3a2e]'>Ticket for another Event.</h2>
-                <p className='mb-2'><b>Event:</b> {eventDetails.title}</p>
+                <h2 className='mb-4 text-xl font-extralight text-[#bd3a2e]'>Ticket for another Match.</h2>
+                <p className='mb-2'><b>Match:</b> {matchDetails.teamA} vs. {matchDetails.teamB}</p>
                 {/* Add more details as per your ticket schema */}
                 <div className="mt-10 modal-actions flex md:flex-row flex-col gap-3">
                     <button className='border border-black py-2 px-5' onClick={handleCancel}>Cancel</button>
@@ -24,13 +24,13 @@ const NotAllowed = ({ eventDetails, handleCancel }) => {
     )
 }
 
-const TicketUsed = ({ eventDetails, userDetails, handleCancel }) => {
+const TicketUsed = ({ matchDetails, userDetails, handleCancel }) => {
     return (
         <div className="modal bg-white text-black py-10 px-5 text-left">
             <div className="modal-content">
                 <p className='mb-4'>Not Allowed!</p>
                 <h2 className='mb-4 text-xl font-extralight text-[#bd3a2e]'>Ticket Expired!</h2>
-                <p className='mb-2'><b>Event:</b> {eventDetails.title || ''}</p>
+                <p className='mb-2'><b>Match:</b> {matchDetails.teamA || ''} vs. {matchDetails.teamB || ''}</p>
                 <p className='mb-2'><b>Name:</b> {userDetails.firstname || ''} {userDetails.lastname}</p>
                 {/* Add more details as per your ticket schema */}
 
@@ -48,26 +48,26 @@ const ScanTicket = () => {
     const [result, setResult] = useState(null);
     const [ticketInfo, setTicketInfo] = useState(null);
     const [userDetails, setUserDetails] = useState(null);
-    const [eventDetails, setEventDetails] = useState(null);
+    const [matchDetails, setMatchDetails] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showUsedModal, setShowUsedModal] = useState(false);
     const [showNotAllowedModal, setShowNotAllowedModal] = useState(false);
 
-    const { organizer } = useOrganizer();
+    // const { organizer } = useOrganizer();
     // console.log(organizer)
 
     // Function to fetch ticket details based on ticketId
     const fetchTicketDetails = (ticketId) => {
-        fetch(`/api/tickets/get-details?ticketId=${ticketId}`)
+        fetch(`/api/durand-cup/tickets/get-details?ticketId=${ticketId}`)
             .then(response => response.json())
             .then(data => {
 
                 setTicketInfo(data.ticket);
                 setUserDetails(data.user);
-                setEventDetails(data.event);
+                setMatchDetails(data.match);
                 // console.log(data.ticket)
 
-                if (data.event.organizer === organizer.userId) {
+                // if (data.event.organizer === organizer.userId) {
                     if (data.ticket.isUsed) {
                         // console.log("used")
                         setShowUsedModal(true);
@@ -76,12 +76,12 @@ const ScanTicket = () => {
                     else {
                         setShowModal(true);
                     }
-                }
-                else {
-                    console.log("Not allowed")
-                    setShowNotAllowedModal(true);
-                    return
-                }
+                // }
+                // else {
+                //     console.log("Not allowed")
+                //     setShowNotAllowedModal(true);
+                //     return
+                // }
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -102,7 +102,7 @@ const ScanTicket = () => {
 
     const handleConfirm = () => {
         // Mark ticket as used in the backend
-        fetch('/api/tickets/scan-ticket', {
+        fetch('/api/durand-cup/tickets/scan-ticket', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ const ScanTicket = () => {
                 setResult(null)
                 setTicketInfo(null)
                 setUserDetails(null)
-                setEventDetails(null)
+                setMatchDetails(null)
             })
             .catch((error) => {
                 console.error('Error marking ticket:', error);
@@ -129,7 +129,7 @@ const ScanTicket = () => {
         setResult(null)
         setTicketInfo(null)
         setUserDetails(null)
-        setEventDetails(null)
+        setMatchDetails(null)
     };
 
     const previewStyle = {
@@ -168,9 +168,15 @@ const ScanTicket = () => {
                     <div className="modal-content">
                         <p className='mb-4 text-[#21d746]'>Ticket successfully scanned!</p>
                         <h2 className='mb-4 text-xl font-extralight'>Ticket Details</h2>
+                        <p className='mb-2 text-xl'><b>Quantity: {ticketInfo.quantity}</b></p>
+                        <p className='mb-2 text-xl'><b>Gate: {ticketInfo.gate}</b></p>
+                        <p className='mb-2 text-lg'>{ticketInfo.section}</p>
+                        <br />
+                        <p className='mb-2'><b>Entry:</b> {ticketInfo.entry}</p>
                         <p className='mb-2'><b>Name:</b> {userDetails.firstname} {userDetails.lastname}</p>
-                        <p className='mb-2'><b>Event:</b> {eventDetails.title}</p>
-                        <p className='mb-2'><b>Quantity:</b> {ticketInfo.ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0)}</p>
+                        <p className='mb-2'><b>Match:</b> {matchDetails.teamA} vs. {matchDetails.teamB}</p>
+                        <p className='mb-2'><b>Date:</b> {matchDetails.date}</p>
+                        <p className='mb-2'><b>Amount:</b> {ticketInfo.amount}</p>
                         {/* Add more details as per your ticket schema */}
 
                         <div className="mt-10 modal-actions flex md:flex-row flex-col gap-3">
@@ -181,9 +187,9 @@ const ScanTicket = () => {
                 </div>
             )}
 
-            {showUsedModal && <TicketUsed eventDetails={eventDetails} userDetails={userDetails} handleCancel={handleCancel} />}
+            {showUsedModal && <TicketUsed matchDetails={matchDetails} userDetails={userDetails} handleCancel={handleCancel} />}
 
-            {showNotAllowedModal && <NotAllowed eventDetails={eventDetails} handleCancel={handleCancel} />}
+            {showNotAllowedModal && <NotAllowed matchDetails={matchDetails} handleCancel={handleCancel} />}
 
         </div>
     );

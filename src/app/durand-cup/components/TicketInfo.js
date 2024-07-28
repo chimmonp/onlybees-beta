@@ -12,9 +12,12 @@ import { usePathname } from "next/navigation"
 
 const TicketInfo = ({ tickets, setTickets, sectionData, matchDetails }) => {
 
+    if (!sectionData) {
+        return <div>Loading...</div>;
+    }
 
     const { setData } = useDurand();
-    const [ avlQuantity, setAvlQuantity ] = useState(0)
+    const [avlQuantity, setAvlQuantity] = useState(0)
 
     const pathname = usePathname().split('/').pop();
 

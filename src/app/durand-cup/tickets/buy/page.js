@@ -33,11 +33,16 @@ const page = () => {
     });
     const { user, login } = useAuth();
     const [ph, setPh] = useState("");
-
+    const [emailError, setEmailError] = useState("");
+    const [isEmailValid, setIsEmailValid] = useState(true);
 
     //Change state on input change
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (name === "email") {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            setIsEmailValid(emailPattern.test(value));
+        }
         setForm((prevForm) => ({ ...prevForm, [name]: value }));
     };
 
@@ -145,6 +150,10 @@ const page = () => {
         }
     }, [user])
 
+    const validateEmail = (email) => {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email);
+    };
 
     const makePayment = async (e) => {
 
@@ -229,6 +238,15 @@ const page = () => {
     };
 
     const handleCheckout = async () => {
+        if (!validateEmail(form.email)) {
+            setEmailError("Invalid email address");
+            setIsEmailValid(false);
+            return;
+        } else {
+            setEmailError("");
+            setIsEmailValid(true);
+        }
+
         // console.log(user)
         if (user.userData) {
             makePayment()
@@ -326,7 +344,6 @@ const page = () => {
                             </div>
                             <div className=''>
                                 <label htmlFor="email" className="block mb-2 text-sm font-medium text-black">Email :</label>
-
                                 <input
                                     type="email"
                                     name="email"
@@ -334,9 +351,10 @@ const page = () => {
                                     value={form.email || ''}
                                     onChange={handleChange}
                                     placeholder="Eg: onlybees@email.com"
-                                    className="px-0 border-b border-black sm:text-sm focus:outline-none focus:ring-none block w-full p-2.5 bg-white placeholder-gray-400 text-black"
+                                    className={`px-0 border-b ${isEmailValid ? 'border-black' : 'border-red-500'} sm:text-sm focus:outline-none focus:ring-none block w-full p-2.5 bg-white placeholder-gray-400 text-black`}
                                     required
                                 />
+                                {emailError && <p className='text-red-500 text-sm'>{emailError}</p>}
                                 <span className='text-[0.7rem]'><span className='text-[#1baf39]'>Note</span> : You&apos;ll receive a copy of the tickets here</span>
                             </div>
                             <div >

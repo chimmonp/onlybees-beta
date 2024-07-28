@@ -52,7 +52,7 @@ const Success = () => {
                 </div> */}
             </div>
             <div className="md:w-[30svw] w-full bg-[#D9D9D9] rounded-b-3xl py-7 md:px-12 px-5 md:text-[0.8rem] text-[0.7rem] text-center md:leading-6">
-                You can <Link className='font-bold underline' href="/dashboard/my-tickets">view your tickets</Link> and <Link className='font-bold underline' href="/dashboard/orders">previous orders</Link> by loggin in using your phone number +911234567890
+                You can <Link className='font-bold underline' href="/dashboard/my-tickets">view your tickets</Link> and <Link className='font-bold underline' href="/dashboard/orders">previous orders</Link> by logging in using your phone number.
             </div>
         </div>
     );
