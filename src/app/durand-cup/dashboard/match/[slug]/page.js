@@ -14,6 +14,9 @@ import { CSVLink } from 'react-csv';
 //Router
 import { usePathname } from 'next/navigation';
 
+//Context
+import { useOrganizer } from '@/context/OrganizerContext';
+
 
 const OrganizerEvent = () => {
 
@@ -30,6 +33,9 @@ const OrganizerEvent = () => {
     const [filteredBookings, setFilteredBookings] = useState([]);
     const [matchId, setMatchId] = useState(null);
     const [matchDetails, setMatchDetails] = useState([]);
+
+    const {organizer} = useOrganizer()
+
 
     // Extract the ID after "event/"
     const pathname = usePathname().split('/').pop();
@@ -192,7 +198,7 @@ const OrganizerEvent = () => {
             <h1 className='font-coolvetica text-2xl'>DASHBOARD</h1>
             <p className='text-3xl'>{matchDetails.teamA} vs. {matchDetails.teamB}</p>
             <p className='text-sm'>Match</p>
-            <div className='mt-10 grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-5'>
+            {organizer && organizer.userId==='66991622612859bde39ee85c' && <div className='mt-10 grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-5'>
                 <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 md:px-5 px-1 rounded-lg'>
                     <p className='font-medium text-lg'>{totalSales}</p>
                     <p className='text-[#555555]'>Total Sales in INR</p>
@@ -201,7 +207,7 @@ const OrganizerEvent = () => {
                     <p className='font-medium text-lg'>{totalTickets}</p>
                     <p className='text-[#555555]'>Total Tickets</p>
                 </div>
-            </div>
+            </div>}
             <div className='flex md:flex-row flex-col md:justify-between md:items-center justify-start items-start'>
                 <select id="entries" className='bg-[#D9D9D9] w-[100px] mt-5 px-2 rounded-md py-1 text-black font-medium' value={entries} onChange={handleEntriesChange}>
                     <option value="10">10</option>
@@ -241,8 +247,8 @@ const OrganizerEvent = () => {
                             <th className='px-3 py-3 font-medium text-sm'>Bowl</th>
                             <th className='px-3 py-3 font-medium text-sm'>Gate</th>
                             <th className='px-3 py-3 font-medium text-sm'>Entry</th>
-                            <th className='px-3 py-3 font-medium text-sm'>Payment Status</th>
-                            <th className='px-3 py-3 font-medium text-sm'>Ticket No</th>
+                            {/* <th className='px-3 py-3 font-medium text-sm'>Payment Status</th> */}
+                            <th className='px-3 py-3 font-medium text-sm'>Scanned</th>
                         </tr>
                     </thead>
                     <tbody className='bg-[#D9D9D9] text-black text-sm'>
@@ -268,8 +274,8 @@ const OrganizerEvent = () => {
                                     <td className='px-3'>{booking.sectionInfo.bowl}</td>
                                     <td className='px-3'>{booking.sectionInfo.gate}</td>
                                     <td className='px-3'>{booking.sectionInfo.entry}</td>
-                                    <td className={`px-3 ${stat === "SUCCESS" ? "text-[#1baf39]" : "text-[#de0a26]"}`}>{stat}</td>
-                                    <td className='py-2 px-2 text-wrap font-mono'>{booking._id}</td>
+                                    {/* <td className={`px-3 ${stat === "SUCCESS" ? "text-[#1baf39]" : "text-[#de0a26]"}`}>{stat}</td> */}
+                                    <td className={`py-2 px-2 text-wrap font-mono text-center ${booking.ticket[0].isUsed?"text-[#1baf39]":"text-[#bd3a2e]"}`}>{booking.ticket[0].isUsed?"Yes":"No"}</td>
                                 </tr>
                             )
                         })}

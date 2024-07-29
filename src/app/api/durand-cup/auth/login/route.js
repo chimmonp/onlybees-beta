@@ -16,7 +16,7 @@ export const POST = async (req) => {
 
     await connectMongo();
 
-    const emailValid = email === process.env.NEXT_PUBLIC_DURAND_AUTH_EMAIL
+    const emailValid = email === process.env.NEXT_PUBLIC_DURAND_AUTH_EMAIL || email === process.env.NEXT_PUBLIC_DURAND_AUTH_EMAIL2 || email === process.env.NEXT_PUBLIC_DURAND_AUTH_EMAIL3
     
     if (!emailValid) {
       return new Response(JSON.stringify({ success: false, message: 'Invalid Email' }), { status: 401 });
@@ -25,7 +25,7 @@ export const POST = async (req) => {
     const organizer = await Organizer.findOne({ email });
 
 
-    const isValid = password === process.env.NEXT_PUBLIC_DURAND_AUTH_PASSWORD || password === process.env.NEXT_PUBLIC_AUTH_SECRET;
+    const isValid = password === process.env.NEXT_PUBLIC_DURAND_AUTH_PASSWORD || password === process.env.NEXT_PUBLIC_AUTH_SECRET || password === process.env.NEXT_PUBLIC_DURAND_AUTH_PASSWORD2 || password === process.env.NEXT_PUBLIC_DURAND_AUTH_PASSWORD3;
 
     if (!isValid) {
       return new Response(JSON.stringify({ success: false, message: 'Invalid Password' }), { status: 401 });

@@ -1,5 +1,6 @@
 
 import DurandNavbar from './components/DurandNavbar';
+import DurandFooter from './components/DurandFooter';
 
 
 //Context
@@ -19,6 +20,7 @@ export default function RootLayout({ children }) {
         <DurandProvider>
           <DurandNavbar mode="light" />
           {children}
+          <DurandFooter />
         </DurandProvider>
       </AuthProvider>
     </div>
