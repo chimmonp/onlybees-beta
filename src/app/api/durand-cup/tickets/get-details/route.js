@@ -4,6 +4,7 @@ import connectMongo from '@/lib/mongodb';
 import DurandTicket from '@/models/DurandTicket';
 import User from '@/models/User';
 import Match from '@/models/Match';
+import Section from '@/models/Section';
 
 export const GET = async (req) => {
     try {
@@ -31,13 +32,14 @@ export const GET = async (req) => {
 
         const match = await Match.findById(ticket.match);
         const user = await User.findById(ticket.user);
+        const section = await Section.findById(ticket.section);
 
         // console.log("User : \n", user)
         // console.log("Match : \n", match)
         // console.log("Ticket : \n", ticket)
 
         // Return ticket details
-        return new Response(JSON.stringify({ success: true, ticket, user, match }), { status: 200 });
+        return new Response(JSON.stringify({ success: true, ticket, user, match, section }), { status: 200 });
     } catch (error) {
         console.error(error);
         return new Response(JSON.stringify({ success: false, error: 'Server Error' }), { status: 500 });

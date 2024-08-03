@@ -47,6 +47,7 @@ const TicketUsed = ({ matchDetails, userDetails, handleCancel }) => {
 const ScanTicket = () => {
     const [result, setResult] = useState(null);
     const [ticketInfo, setTicketInfo] = useState(null);
+    const [sectionInfo, setSectionInfo] = useState(null);
     const [userDetails, setUserDetails] = useState(null);
     const [matchDetails, setMatchDetails] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -65,6 +66,7 @@ const ScanTicket = () => {
                 setTicketInfo(data.ticket);
                 setUserDetails(data.user);
                 setMatchDetails(data.match);
+                setSectionInfo(data.section)
                 // console.log(data.ticket)
 
                 // if (data.event.organizer === organizer.userId) {
@@ -164,15 +166,15 @@ const ScanTicket = () => {
             </div>
 
             {showModal && (
-                <div className="modal bg-white text-black py-10 px-5 text-left">
+                <div className="modal bg-white text-black py-10 px-5 mx-10 text-left">
                     <div className="modal-content">
                         <p className='mb-4 text-[#21d746]'>Ticket successfully scanned!</p>
                         <h2 className='mb-4 text-xl font-extralight'>Ticket Details</h2>
                         <p className='mb-2 text-xl'><b>Quantity: {ticketInfo.quantity}</b></p>
-                        <p className='mb-2 text-xl'><b>Gate: {ticketInfo.gate}</b></p>
-                        <p className='mb-2 text-lg'>{ticketInfo.section}</p>
+                        <p className='mb-2 text-xl'><b>Gate: {sectionInfo.gate}</b></p>
+                        <p className='mb-2 text-lg'>{sectionInfo._id}</p>
                         <br />
-                        <p className='mb-2'><b>Entry:</b> {ticketInfo.entry}</p>
+                        <p className='mb-2'><b>Entry:</b> {sectionInfo.entry}</p>
                         <p className='mb-2'><b>Name:</b> {userDetails.firstname} {userDetails.lastname}</p>
                         <p className='mb-2'><b>Match:</b> {matchDetails.teamA} vs. {matchDetails.teamB}</p>
                         <p className='mb-2'><b>Date:</b> {matchDetails.date}</p>

@@ -99,12 +99,16 @@ const TicketInfo = ({ tickets, setTickets, sectionData, matchDetails }) => {
                 </div>
                 {tickets > 0 && sectionData.price && tickets <= avlQuantity ? (
                     <Link href="/durand-cup/tickets/buy">
-                        <div className='bg-[#00FF38] mt-3 py-5 rounded-md font-semibold'>BOOK NOW</div>
+                        <div className='bg-[#00FF38] mt-3 py-5 mb-5 rounded-md font-semibold'>BOOK NOW</div>
                     </Link>
                 ) : (
-                    <div className='bg-[#cccccc] opacity-40 mt-3 py-5 rounded-md font-semibold cursor-not-allowed'>BOOK NOW</div>
+                    <div className='bg-[#cccccc] opacity-40 mt-3 py-5 mb-5 rounded-md font-semibold cursor-not-allowed'>BOOK NOW</div>
                 )}
+                <div className='w-screen -ml-5 -mb-3 lg:hidden bg-black py-2 px-2'>
+                    <p className='text-white text-center text-xs font-light'>Developed and maintained by <Link href='https://chimmon.com' className='font-semibold'>Chimmon</Link> &amp; <Link href='https://gauravjoshi.site' className='font-semibold'>Gaurav</Link> of <span className='font-coolvetica'>ONLYBEES.</span></p>
+                </div>
             </div>
+
         </div>
     )
 }

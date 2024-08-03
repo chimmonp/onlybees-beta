@@ -9,8 +9,29 @@ import { EventProvider } from '../context/EventContext';
 import { OrganizerProvider } from '../context/OrganizerContext';
 
 export const metadata = {
-  title: "Onlybees Events",
-  description: "Developed by Gaurav Joshi",
+  title: "Onlybees",
+  description: "Creative Ecosystem for Music and Art. Onlybees fosters creativity by building effective engagement strategies for music and art enthusiasts.",
+  canonical: '/',
+  languages: {
+    'en-US': '/en-US',
+  },
+  openGraph: {
+    images: "https://onlybees.in/BeesLogoBg.png",
+    title: "Onlybees - Creative Ecosystem for Music and Art",
+    description: "Join Onlybees to explore and amplify your creative vision with our dedicated team of strategists, designers, and developers.",
+    url: "https://onlybees.in",
+    type: "website",
+  },
+  twitter: {
+    images: "https://onlybees.in/BeesLogoBg.png",
+    card: "summary_large_image",
+    site: "@OnlyBees",
+    title: "Onlybees - Creative Ecosystem for Music and Art",
+    description: "Join Onlybees to explore and amplify your creative vision with our dedicated team of strategists, designers, and developers.",
+  },
+  organization: "Onlybees",
+  audience: "Artists, Musicians, Event Organizers, Creative Enthusiasts",
+  socialMediaHashtags: ["#CreativeEcosystem", "#Music", "#Art", "#Onlybees"],
 };
 
 export default function RootLayout({ children }) {

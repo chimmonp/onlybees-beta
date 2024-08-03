@@ -101,7 +101,7 @@ const Footer = (props) => {
                 </div>
             </div>
             <div className='w-screen bg-black py-4 lg:px-0 px-10 lg:text-base text-sm'>
-                <p className='text-white text-center font-light'>Developed and maintained by <Link href='https://chimmon.com' className='font-semibold'>Chimmon</Link> and <Link href='https://gauravjoshi.site' className='font-semibold'>Gaurav</Link> - <span className='font-coolvetica'>ONLYBEES.</span></p>
+                <p className='text-white text-center font-light'>Developed and maintained by <Link href='https://chimmon.com' className='font-semibold'>Chimmon</Link> &amp; <Link href='https://gauravjoshi.site' className='font-semibold'>Gaurav</Link> of <span className='font-coolvetica'>ONLYBEES.</span></p>
             </div>
         </>
     )

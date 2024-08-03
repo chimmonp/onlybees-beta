@@ -377,10 +377,14 @@ const page = () => {
                             <p className='font-light text-[0.9rem]'>By purchasing you&apos;ll receive an account, and agree to our general <a className='text-[#1baf39]' href="/terms-and-conditions" target='_blank' rel='noopener noreferrer'>Terms of use</a>, <a className='text-[#1baf39]' href="/privacy-policy" target='_blank' rel='noopener noreferrer'>Privacy Policy</a> and the <a className='text-[#1baf39]' href="/terms-and-conditions" target='_blank' rel='noopener noreferrer'>Ticket Purchase Terms</a>. We process your personal data in accordance with our <a className='text-[#1baf39]' href="/privacy-policy" target='_blank' rel='noopener noreferrer'>Privacy Policy</a>.</p>
                         </div>
                     </div>
+
                 </div>
                 {pathname === 'buy' && <div className=' lg:py-0 py-3 fixed bottom-0 lg:w-1/3 w-screen bg-white px-5'>
-                    <div onClick={handleCheckout} className='bg-[#00FF38] cursor-pointer mt-3 py-5 rounded-md font-semibold text-center'>
+                    <div onClick={handleCheckout} className='bg-[#00FF38] cursor-pointer mt-3 py-5 mb-5 rounded-md font-semibold text-center'>
                         <p>PAY ₹{durandData.amount.totalAmtCalc}</p>
+                    </div>
+                    <div className='w-screen -ml-5 -mb-3 lg:hidden bg-black py-2 px-2'>
+                        <p className='text-white text-center text-xs font-light'>Developed and maintained by <Link href='https://chimmon.com' className='font-semibold'>Chimmon</Link> &amp; <Link href='https://gauravjoshi.site' className='font-semibold'>Gaurav</Link> of <span className='font-coolvetica'>ONLYBEES.</span></p>
                     </div>
                 </div>}
             </div>
