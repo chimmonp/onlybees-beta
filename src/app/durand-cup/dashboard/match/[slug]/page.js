@@ -33,6 +33,7 @@ const OrganizerEvent = () => {
     const [filteredBookings, setFilteredBookings] = useState([]);
     const [matchId, setMatchId] = useState(null);
     const [matchDetails, setMatchDetails] = useState([]);
+    const [totalRedeemedQuantity, setTotalRedeemedQuantity] = useState([]);
 
     const {organizer} = useOrganizer()
 
@@ -61,6 +62,7 @@ const OrganizerEvent = () => {
 
             setBookings(successfulBookings);
             setTotalEntries(successfulBookings.length);
+            setTotalRedeemedQuantity(data.totalUsedQuantity)
             // setTotalTickets(data.match.sold);
             // setTotalSales(data.match.totalSales);
             setLoading(false);
@@ -174,6 +176,7 @@ const OrganizerEvent = () => {
         { label: 'Bowl', key: 'bowl' },
         { label: 'Gate', key: 'gate' },
         { label: 'Entry', key: 'entry' },
+        { label: 'Scanned', key: 'scanned' },
     ];
 
     const csvData = bookings.map((booking) => ({
@@ -188,6 +191,7 @@ const OrganizerEvent = () => {
         bowl: booking.sectionInfo.bowl || 'undefined',
         gate: booking.sectionInfo.gate || 'undefined',
         entry: booking.sectionInfo.entry || 'undefined',
+        scanned: booking.ticket[0].isUsed || 'false',
     }));
 
     if (loading)
@@ -206,6 +210,10 @@ const OrganizerEvent = () => {
                 <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 px-5 rounded-lg'>
                     <p className='font-medium text-lg'>{totalTickets}</p>
                     <p className='text-[#555555]'>Total Tickets</p>
+                </div>
+                <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 px-5 rounded-lg'>
+                    <p className='font-medium text-lg'>{totalRedeemedQuantity}</p>
+                    <p className='text-[#555555]'>Total Redeemed</p>
                 </div>
             </div>}
             <div className='flex md:flex-row flex-col md:justify-between md:items-center justify-start items-start'>

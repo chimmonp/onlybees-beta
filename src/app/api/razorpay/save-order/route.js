@@ -183,37 +183,37 @@ export const POST = async (req, res) => {
 
 
         // Meta Conversion API Call
-        try {
-            const accessToken = process.env.NEXT_PUBLIC_META_ACCESS_TOKEN; // Replace with your generated access token
-            const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID; // Replace with your Pixel ID
-            await axios.post(
-                `https://graph.facebook.com/v12.0/${pixelId}/events?access_token=${accessToken}`,
-                {
-                    data: [
-                        {
-                            event_name: 'Purchase',
-                            event_time: Math.floor(Date.now() / 1000),
-                            user_data: {
-                                em: hashData(email), // hashed email
-                                ph: hashData(phone), // hashed phone number
-                            },
-                            custom_data: {
-                                currency: 'INR',
-                                value: amount,
-                                content_name: event.title,
-                                content_category: 'Event',
-                                content_ids: [ticket._id.toString()],
-                                num_items: totalQuantity,
-                                order_id: newOrder._id.toString(),
-                            },
-                            action_source: 'website',
-                        },
-                    ],
-                }
-            );
-        } catch (error) {
-            console.error('Meta Conversion API Error:', error);
-        }
+        // try {
+        //     const accessToken = process.env.NEXT_PUBLIC_META_ACCESS_TOKEN; // Replace with your generated access token
+        //     const pixelId = process.env.NEXT_PUBLIC_META_PIXEL_ID; // Replace with your Pixel ID
+        //     await axios.post(
+        //         `https://graph.facebook.com/v12.0/${pixelId}/events?access_token=${accessToken}`,
+        //         {
+        //             data: [
+        //                 {
+        //                     event_name: 'Purchase',
+        //                     event_time: Math.floor(Date.now() / 1000),
+        //                     user_data: {
+        //                         em: hashData(email), // hashed email
+        //                         ph: hashData(phone), // hashed phone number
+        //                     },
+        //                     custom_data: {
+        //                         currency: 'INR',
+        //                         value: amount,
+        //                         content_name: event.title,
+        //                         content_category: 'Event',
+        //                         content_ids: [ticket._id.toString()],
+        //                         num_items: totalQuantity,
+        //                         order_id: newOrder._id.toString(),
+        //                     },
+        //                     action_source: 'website',
+        //                 },
+        //             ],
+        //         }
+        //     );
+        // } catch (error) {
+        //     console.error('Meta Conversion API Error:', error);
+        // }
 
 
 

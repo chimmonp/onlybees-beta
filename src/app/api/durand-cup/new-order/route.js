@@ -43,41 +43,45 @@ const formatDate = (date) => {
 
 export async function POST(req, res) {
     try {
-        const data = await req.formData();
+        // const data = await req.formData();
 
         // console.log(data)
 
-        if (!data) {
-            return new Response(JSON.stringify({ success: false, error: 'Data not available' }), { status: 400 });
-        }
-        // console.log(data)
+        // if (!data) {
+        //     return new Response(JSON.stringify({ success: false, error: 'Data not available' }), { status: 400 });
+        // }
+        // // console.log(data)
 
-        const status = data.get("code");
-        const merchantId = data.get("merchantId");
-        const transactionId = data.get("transactionId");
+        // const status = data.get("code");
+        // const merchantId = data.get("merchantId");
+        // const transactionId = data.get("transactionId");
 
-        // console.log(status, merchantId, transactionId)
+        const { searchParams } = new URL(req.url);
+        const transactionId = searchParams.get('transactionId');
+        // const matchId = searchParams.get('matchId')
+
+        // // console.log(status, merchantId, transactionId)
 
 
-        const st = `/pg/v1/status/${merchantId}/${transactionId}` + process.env.NEXT_PUBLIC_PHONEPE_SALT_KEY;
-        // console.log(st)
-        const dataSha256 = sha256(st);
+        // const st = `/pg/v1/status/${merchantId}/${transactionId}` + process.env.NEXT_PUBLIC_PHONEPE_SALT_KEY;
+        // // console.log(st)
+        // const dataSha256 = sha256(st);
 
-        const checksum = dataSha256 + "###" + process.env.NEXT_PUBLIC_PHONEPE_SALT_INDEX;
-        // console.log(checksum);
+        // const checksum = dataSha256 + "###" + process.env.NEXT_PUBLIC_PHONEPE_SALT_INDEX;
+        // // console.log(checksum);
 
-        const options = {
-            method: "GET",
-            url: `${process.env.NEXT_PUBLIC_PHONEPE_HOST_URL}/pg/v1/status/${merchantId}/${transactionId}`,
-            headers: {
-                accept: "application/json",
-                "Content-Type": "application/json",
-                "X-VERIFY": checksum,
-                "X-MERCHANT-ID": `${merchantId}`,
-            },
-        };
+        // const options = {
+        //     method: "GET",
+        //     url: `${process.env.NEXT_PUBLIC_PHONEPE_HOST_URL}/pg/v1/status/${merchantId}/${transactionId}`,
+        //     headers: {
+        //         accept: "application/json",
+        //         "Content-Type": "application/json",
+        //         "X-VERIFY": checksum,
+        //         "X-MERCHANT-ID": `${merchantId}`,
+        //     },
+        // };
 
-        const response = await axios.request(options);
+        // const response = await axios.request(options);
         // console.log(response.data)
         // console.log("r===", response.data.code);
 
@@ -93,7 +97,7 @@ export async function POST(req, res) {
 
         // console.log(order)
 
-        if (response.data.code == "PAYMENT_SUCCESS" && order.status !== "SUCCESS") {
+        if (order.status !== "SUCCESS") {
 
             // order.status = "SUCCESS";
             // await order.save();

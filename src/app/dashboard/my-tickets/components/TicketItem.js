@@ -103,7 +103,7 @@ const TicketItem = ({ booking }) => {
                         src={booking.qrLink}
                         height={150}
                         width={150}
-                        className="rounded-lg mx-auto"
+                        className="rounded-lg mx-auto invert"
                         alt='QR Code'
                     />}
                     <p className='font-light mt-5'>{tickets}</p>

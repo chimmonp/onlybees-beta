@@ -24,7 +24,7 @@ export const GET = async (req) => {
             return new Response(JSON.stringify({ success: false, error: 'Match not found' }), { status: 404 });
         }
 
-        // Create aggregation pipeline to get orders, their section information, and tickets
+        // Create aggregation pipeline to get orders with status "SUCCESS", their section information, and tickets
         const ordersWithSectionsAndTickets = await DurandOrder.aggregate([
             { $match: { match: match._id, status: "SUCCESS" } },
             {
@@ -50,37 +50,34 @@ export const GET = async (req) => {
                 }
             },
             {
-                $project: {
-                    'sectionInfo.availableQuantity': 0,
-                    'ticket.user': 0,
-                    'ticket.gate': 0,
-                    'ticket.entry': 0,
-                    'ticket.orderId': 0,
-                    'ticket.match': 0,
-                    'ticket.amount': 0,
-                    'ticket.quantity': 0,
-                    'ticket.section': 0,
-                    'ticket.qrLink': 0,
-                    'ticket.bookingDate': 0
+                $unwind: {
+                    path: '$ticket',
+                    preserveNullAndEmptyArrays: true
                 }
-            }
-        ]).exec();
-
-        // Calculate total used ticket quantity
-        const totalUsedTickets = await DurandTicket.aggregate([
-            { $match: { match: match._id, isUsed: true } },
+            },
             {
                 $group: {
-                    _id: null,
-                    totalQuantity: { $sum: "$quantity" }
+                    _id: {
+                        gate: '$ticket.gate',
+                        bowl: '$ticket.bowl'
+                    },
+                    totalQuantity: { $sum: '$ticket.quantity' }
                 }
             }
         ]).exec();
 
-        const totalUsedQuantity = totalUsedTickets.length > 0 ? totalUsedTickets[0].totalQuantity : 0;
+        // Format the result to include gate and bowl separately
+        const formattedResult = ordersWithSectionsAndTickets.map(item => ({
+            gate: item._id.gate,
+            bowl: item._id.bowl,
+            totalQuantity: item.totalQuantity
+        }));
 
-        // Return the orders with section information and tickets in the response
-        return new Response(JSON.stringify({ success: true, orders: ordersWithSectionsAndTickets, match, totalUsedQuantity }), { status: 200 });
+        // Return the formatted result in the response
+        return new Response(JSON.stringify({
+            success: true,
+            data: formattedResult
+        }), { status: 200 });
 
     } catch (error) {
         // Handle errors

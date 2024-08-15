@@ -67,11 +67,11 @@ const TicketInfo = ({ tickets, setTickets, sectionData, matchDetails }) => {
                     <option value={3}>3 TICKETS</option>
                     <option value={4}>4 TICKETS</option>
                     <option value={5}>5 TICKETS</option>
-                    <option value={6}>6 TICKETS</option>
+                    {/* <option value={6}>6 TICKETS</option>
                     <option value={7}>7 TICKETS</option>
                     <option value={8}>8 TICKETS</option>
                     <option value={9}>9 TICKETS</option>
-                    <option value={10}>10 TICKETS</option>
+                    <option value={10}>10 TICKETS</option> */}
                 </select>
                 <select name="bowl" id="bowl" value={sectionData.bowl} disabled className='lg:bg-[#D9D9D9] bg-white mt-5 py-3 w-full rounded-md px-4'>
                     <option value="Upper Bowl">UPPER BOWL</option>
@@ -104,9 +104,6 @@ const TicketInfo = ({ tickets, setTickets, sectionData, matchDetails }) => {
                 ) : (
                     <div className='bg-[#cccccc] opacity-40 mt-3 py-5 mb-5 rounded-md font-semibold cursor-not-allowed'>BOOK NOW</div>
                 )}
-                <div className='w-screen -ml-5 -mb-3 lg:hidden bg-black py-2 px-2'>
-                    <p className='text-white text-center text-xs font-light'>Developed and maintained by <Link href='https://chimmon.com' className='font-semibold'>Chimmon</Link> &amp; <Link href='https://gauravjoshi.site' className='font-semibold'>Gaurav</Link> of <span className='font-coolvetica'>ONLYBEES.</span></p>
-                </div>
             </div>
 
         </div>

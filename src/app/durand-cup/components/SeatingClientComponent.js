@@ -10,6 +10,7 @@ import fc_goa from "../../../../public/FC-Goa.png"
 import hyderabad_fc from "../../../../public/Hyderabad_FC.png"
 import slfc from "../../../../public/SLFC-LOGO.png"
 import tafc from "../../../../public/tafc.png"
+import rufc from "../../../../public/rufc.png"
 import unannounced from "../../../../public/unannounced.svg"
 
 const SeatingClientComponent = ({ initialSections, initialMatchDetails, slugEnd }) => {
@@ -42,6 +43,9 @@ const SeatingClientComponent = ({ initialSections, initialMatchDetails, slugEnd 
         }
         else if (club === 'Hyderabad FC') {
             return hyderabad_fc
+        }
+        else if (club === 'Rangdajied United FC') {
+            return rufc
         }
     }
 
@@ -103,6 +107,7 @@ const SeatingClientComponent = ({ initialSections, initialMatchDetails, slugEnd 
                     }
 
                     section.addEventListener('click', (event) => {
+                        console.log(section.id)
                         if (lastSelected) {
                             lastSelected.setAttribute('fill', lastSelected.id.startsWith("lower") ? '#f90000' : '#003dff');
                             if (lastSelected.id === 'upper-bowl-4' || lastSelected.id === 'upper-bowl-5' || lastSelected.id === 'upper-bowl-6' || lastSelected.id === 'upper-bowl-7' || lastSelected.id === 'upper-bowl-8' || lastSelected.id === 'upper-bowl-9') {
@@ -115,6 +120,7 @@ const SeatingClientComponent = ({ initialSections, initialMatchDetails, slugEnd 
                         section.setAttribute('fill', 'black');
                         lastSelected = section;
                         setSelectedSection(section.id);
+                        console.log(section.id)
                     });
                 } else {
                     section.setAttribute('fill', '#7f7f7f');
