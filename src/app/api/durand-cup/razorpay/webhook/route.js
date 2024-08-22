@@ -4,14 +4,16 @@ import DurandTicket from '@/models/DurandTicket';
 import Section from '@/models/Section';
 import Match from '@/models/Match';
 import User from '@/models/User';
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import sha256 from "crypto-js/sha256";
+import crypto from "crypto";
 import axios from "axios";
 import QRCode from 'qrcode';
 import { sendDurandEmail } from '@/lib/nodemailer'; // Adjust the import path
 import durandEmailTemplate from '@/templates/durandEmailTemplate.hbs'; // Import the precompiled template
 import durandPdfTemplate from '@/templates/durandPdfTemplate.hbs'; // Import the precompiled template
 import { generatePdfFromHtml } from '@/lib/generateTicketPDF';
+import Razorpay from 'razorpay';
 
 
 const generateQrCodeUrl = async (text) => {
@@ -42,48 +44,90 @@ const formatDate = (date) => {
 }
 
 export async function POST(req, res) {
+
+    // console.log("Webhook Entered!!!!!!")
+
     try {
-        const data = await req.formData();
 
-        // console.log(data)
+        const secret = 'a55h0le';
 
-        if (!data) {
-            return new Response(JSON.stringify({ success: false, error: 'Data not available' }), { status: 400 });
+        // Retrieve the raw body as an array buffer
+        const rawBody = await req.text();
+
+        // Validate the webhook signature
+        const expectedSignature = crypto
+            .createHmac('sha256', secret)
+            .update(rawBody)
+            .digest('hex');
+
+        // console.log(req.get('x-razorpay-signature'))
+
+        // const receivedSignature = req.get('x-razorpay-signature');
+        const receivedSignature = req.headers.get('x-razorpay-signature')
+
+        // console.log("expectedSignature : ", expectedSignature)
+        // console.log("receivedSignature : ", receivedSignature)
+
+        if (expectedSignature !== receivedSignature) {
+            console.log("Invalid Signature!!!!!!");
+            return new Response(JSON.stringify({ success: false, error: 'Invalid signature' }), { status: 400 });
         }
-        // console.log(data)
 
-        const status = data.get("code");
-        const merchantId = data.get("merchantId");
-        const transactionId = data.get("transactionId");
+        // console.log(req.body)
 
-        // console.log(status, merchantId, transactionId)
+        const { event, payload } = JSON.parse(rawBody);
+        console.log(event, payload)
+
+        // -------------------------------------- PhonePe ----------------------------------------------------------
+
+        // const data = await req.formData();
+
+        // // console.log(data)
+
+        // if (!data) {
+        //     return new Response(JSON.stringify({ success: false, error: 'Data not available' }), { status: 400 });
+        // }
+        // // console.log(data)
+
+        // const status = data.get("code");
+        // const merchantId = data.get("merchantId");
+        // const transactionId = data.get("transactionId");
+
+        // // console.log(status, merchantId, transactionId)
 
 
-        const st = `/pg/v1/status/${merchantId}/${transactionId}` + process.env.NEXT_PUBLIC_PHONEPE_SALT_KEY;
-        // console.log(st)
-        const dataSha256 = sha256(st);
+        // const st = `/pg/v1/status/${merchantId}/${transactionId}` + process.env.NEXT_PUBLIC_PHONEPE_SALT_KEY;
+        // // console.log(st)
+        // const dataSha256 = sha256(st);
 
-        const checksum = dataSha256 + "###" + process.env.NEXT_PUBLIC_PHONEPE_SALT_INDEX;
-        // console.log(checksum);
+        // const checksum = dataSha256 + "###" + process.env.NEXT_PUBLIC_PHONEPE_SALT_INDEX;
+        // // console.log(checksum);
 
-        const options = {
-            method: "GET",
-            url: `${process.env.NEXT_PUBLIC_PHONEPE_HOST_URL}/pg/v1/status/${merchantId}/${transactionId}`,
-            headers: {
-                accept: "application/json",
-                "Content-Type": "application/json",
-                "X-VERIFY": checksum,
-                "X-MERCHANT-ID": `${merchantId}`,
-            },
-        };
+        // const options = {
+        //     method: "GET",
+        //     url: `${process.env.NEXT_PUBLIC_PHONEPE_HOST_URL}/pg/v1/status/${merchantId}/${transactionId}`,
+        //     headers: {
+        //         accept: "application/json",
+        //         "Content-Type": "application/json",
+        //         "X-VERIFY": checksum,
+        //         "X-MERCHANT-ID": `${merchantId}`,
+        //     },
+        // };
 
-        const response = await axios.request(options);
+        // const response = await axios.request(options);
         // console.log(response.data)
         // console.log("r===", response.data.code);
 
+        // -------------------------------------- xxxxxxxxxxxxxxxxx ----------------------------------------------------------
+
+
         await connectMongo();
 
-        const order = await DurandOrder.findOne({ transactionId });
+        const paymentId = payload.payment.entity.id;
+        const orderId = payload.payment.entity.order_id;
+
+
+        const order = await DurandOrder.findOne({ orderId });
 
         // console.log(order)
 
@@ -91,9 +135,15 @@ export async function POST(req, res) {
             return new Response(JSON.stringify({ success: false, error: 'Order not found' }), { status: 404 });
         }
 
+        if (order.status === "SUCCESS") {
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/durand-cup/success/`, {
+                status: 301,
+            });
+        }
+
         // console.log(order)
 
-        if (response.data.code == "PAYMENT_SUCCESS" && order.status !== "SUCCESS") {
+        if (event === 'payment.captured') {
 
             // order.status = "SUCCESS";
             // await order.save();
@@ -120,7 +170,7 @@ export async function POST(req, res) {
             const existingTicket = await DurandTicket.findOne({ orderId: order._id, user: user._id });
             if (existingTicket) {
                 // console.log(`Ticket already exists for order: ${order._id}`);
-                return NextResponse.redirect(`https://onlybees.in/durand-cup/success/`, {
+                return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/durand-cup/success/`, {
                     status: 301,
                 });
             }
@@ -238,11 +288,11 @@ export async function POST(req, res) {
             // Send the email with PDF and QR code attachments
             await sendDurandEmail(order.email, `Booking Confirmation & Tickets - Durand Cup`, emailHtml, pdfBuffer, newTicket._id);
 
-            return NextResponse.redirect(`https://onlybees.in/durand-cup/success/`, {
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/durand-cup/success/`, {
                 status: 301,
             });
         }
-        else if (response.data.code == "PAYMENT_PENDING") {
+        else if (event === 'payment.failed') {
             // order.status = "PAYMENT PENDING";
             // await order.save();
 
@@ -270,13 +320,8 @@ export async function POST(req, res) {
             // await section.save();
 
 
-            await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_PENDING", })
-            return NextResponse.redirect(`https://onlybees.in/durand-cup/payment-pending/`, {
-                status: 301,
-            });
-        }
-        else if(response.data.code == "PAYMENT_SUCCESS" && order.status === "SUCCESS"){
-            return NextResponse.redirect(`https://onlybees.in/durand-cup/success/`, {
+            await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_FAILED", })
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/durand-cup/failed/`, {
                 status: 301,
             });
         }
@@ -307,8 +352,8 @@ export async function POST(req, res) {
             //     { $inc: { 'availableQuantity.$.quantity': order.quantity } }
             // );
 
-            await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_FAILED", })
-            return NextResponse.redirect(`https://onlybees.in/durand-cup/failed`, {
+            await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_UNHANDLED", })
+            return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/durand-cup/payment-pending`, {
                 // a 301 status is required to redirect from a POST to a GET route
                 status: 301,
             });

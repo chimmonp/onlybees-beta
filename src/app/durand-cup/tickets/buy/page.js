@@ -13,11 +13,17 @@ import { useDurand } from "@/context/DurandContext"
 
 import axios from 'axios'
 
+import Razorpay from 'razorpay';
+
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 import { Accordion, AccordionItem, AccordionItemHeading, AccordionItemButton, AccordionItemPanel } from 'react-accessible-accordion';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+
+//Components
+import PaymentErrorModal from './components/PaymentErrorModal';
+
 
 const page = () => {
 
@@ -35,6 +41,41 @@ const page = () => {
     const [ph, setPh] = useState("");
     const [emailError, setEmailError] = useState("");
     const [isEmailValid, setIsEmailValid] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        const loadScript = () => {
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.async = true;
+            document.body.appendChild(script);
+
+            script.onload = () => {
+                console.log('Razorpay Checkout script loaded successfully.');
+            };
+
+            script.onerror = () => {
+                console.error('Failed to load the Razorpay script.');
+            };
+        };
+        const loadCCAvenueScript = () => {
+            const script = document.createElement('script');
+            script.src = 'https://secure.ccavenue.com/transaction/transaction.do?command=initiateTransaction';
+            script.async = true;
+            document.body.appendChild(script);
+
+            script.onload = () => {
+                console.log('CCAvenue Checkout script loaded successfully.');
+            };
+
+            script.onerror = () => {
+                console.error('Failed to load the CCAvenue script.');
+            };
+        };
+        loadScript();
+        loadCCAvenueScript();
+    }, []);
+
 
     //Change state on input change
     const handleChange = (e) => {
@@ -155,6 +196,14 @@ const page = () => {
         return emailPattern.test(email);
     };
 
+    const openModal = () => {
+        setIsModalOpen(true);
+    }
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    }
+
     const makePayment = async (e) => {
 
         // e.preventDefault();
@@ -197,9 +246,9 @@ const page = () => {
                     merchantTransactionId: transactionId,
                     merchantUserId: 'OB-' + uuidv4().toString(36).slice(-6),
                     amount: durandData.amount.totalAmtCalc * 100,
-                    redirectUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/phonepe/status/${transactionId}`,
+                    redirectUrl: `https://onlybees.in/api/phonepe/status/${transactionId}`,
                     redirectMode: "POST",
-                    callbackUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/phonepe/status/${transactionId}`,
+                    callbackUrl: `https://onlybees.in/api/phonepe/status/${transactionId}`,
                     mobileNumber: ph,
                     paymentInstrument: {
                         type: "PAY_PAGE",
@@ -237,6 +286,137 @@ const page = () => {
         }
     };
 
+
+    const makeRazorpayPayment = async () => {
+
+
+        const razorpay = new Razorpay({
+            key_id: "rzp_live_CorORgDh6QAI98",
+            key_secret: "w1TwzubfVSB93Q8TQIOWaceB",
+        });
+
+        const transactionId = "Tr-" + uuidv4().toString(36).slice(-6);
+
+        const orderPayload = {
+            transactionId,
+            userId: user.userData?._id || '6671a57c0e924ab6086fbd36',
+            match: durandData.matchDetails._id,
+            status: "PENDING",
+            amount: durandData.amount.totalAmtCalc, // example amount
+            baseAmount: durandData.amount.subtotalAmt,
+            quantity: durandData.tickets,
+            section: durandData.sectionData._id,
+            currency: "INR",
+            notes: { note: `Tickets for Durand Cup on ${durandData.matchDetails.slug}` },
+            name: `${form.firstname} ${form.lastname}`,
+            phone: ph,
+            email: form.email,
+        };
+
+        try {
+            // Save transaction to the database
+            const orderResponse = await axios.post('/api/durand-cup/razorpay/order', orderPayload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (orderResponse.data.success) {
+                const orderId = orderResponse.data.order.orderId; // Retrieve the order ID from your backend
+
+                console.log(orderId)
+
+                const options = {
+                    key: razorpay.key_id, // Replace with your Razorpay key ID
+                    amount: 2 * 100, // Amount in paise
+                    currency: "INR",
+                    name: "Onlybees",
+                    description: `Tickets for Durand Cup on ${durandData.matchDetails.slug}`,
+                    order_id: orderId, // The order ID from your backend
+                    handler: async function (response) {
+                        const paymentId = response.razorpay_payment_id;
+                        saveOrder(orderPayload, { ...orderResponse.data, paymentId });
+                        router.push('/durand-cup/success'); // Redirect to success page
+                    },
+                    prefill: {
+                        name: `${form.firstname} ${form.lastname}`,
+                        email: form.email,
+                        contact: ph,
+                    },
+                    theme: {
+                        color: '#00FF38',
+                    },
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.open();
+            }
+        } catch (error) {
+            console.error('Payment request error: ', error.response ? error.response.data : error.message);
+        }
+    };
+
+    const makeCCAvenuePayment = async () => {
+        const transactionId = "Tr-" + uuidv4().toString(36).slice(-6);
+
+        const orderPayload = {
+            transactionId,
+            userId: user.userData?._id || '6671a57c0e924ab6086fbd36',
+            match: durandData.matchDetails._id,
+            status: "PENDING",
+            amount: durandData.amount.totalAmtCalc, // example amount
+            baseAmount: durandData.amount.subtotalAmt,
+            quantity: durandData.tickets,
+            section: durandData.sectionData._id,
+            currency: "INR",
+            notes: `Tickets for Durand Cup on ${durandData.matchDetails.slug}`,
+            name: `${form.firstname} ${form.lastname}`,
+            phone: ph,
+            email: form.email
+        };
+
+        try {
+            // Save transaction to the database
+            const orderResponse = await axios.post('/api/durand-cup/save-order', orderPayload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (orderResponse.data.success) {
+                const paymentDetails = {
+                    merchant_id: process.env.NEXT_PUBLIC_CCAVENUE_MERCHANT_ID,
+                    order_id: transactionId,
+                    currency: "INR",
+                    amount: durandData.amount.totalAmtCalc,
+                    redirect_url: `http://localhost:3000/durand-cup/ccavenue/webhook`,  // Success URL
+                    cancel_url: `http://localhost:3000/durand-cup/ccavenue/webhook`,   // Cancel URL
+                    language: "EN",
+                };
+
+                // Create a form to submit the payment details to CCAvenue
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'https://secure.ccavenue.com/transaction/transaction.do';
+
+                Object.keys(paymentDetails).forEach(key => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = paymentDetails[key];
+                    form.appendChild(input);
+                });
+
+                document.body.appendChild(form);
+                form.submit();  // Submit the form to CCAvenue
+
+            }
+        } catch (error) {
+            console.error('Payment request error: ', error.response ? error.response.data : error.message);
+        }
+    }
+
+
     const handleCheckout = async () => {
         if (!validateEmail(form.email)) {
             setEmailError("Invalid email address");
@@ -267,7 +447,7 @@ const page = () => {
     }
 
     if (durandData.length === 0) {
-        router.push("/durand-cup/tickets/aug-02")
+        router.push("/durand-cup/tickets/aug-21")
     }
 
     if (durandData.length !== 0) {
@@ -384,6 +564,7 @@ const page = () => {
                         <p>PAY ₹{durandData.amount.totalAmtCalc}</p>
                     </div>
                 </div>}
+                <PaymentErrorModal isOpen={isModalOpen} onClose={closeModal} />
             </div>
         )
     }

@@ -11,6 +11,8 @@ import hyderabad_fc from "../../../../public/Hyderabad_FC.png"
 import slfc from "../../../../public/SLFC-LOGO.png"
 import tafc from "../../../../public/tafc.png"
 import rufc from "../../../../public/rufc.png"
+import emami from "../../../../public/emamifc.png"
+
 import unannounced from "../../../../public/unannounced.svg"
 
 const SeatingClientComponent = ({ initialSections, initialMatchDetails, slugEnd }) => {
@@ -47,6 +49,9 @@ const SeatingClientComponent = ({ initialSections, initialMatchDetails, slugEnd 
         else if (club === 'Rangdajied United FC') {
             return rufc
         }
+        else if (club === 'Emami East Bengal FC') {
+            return emami
+        }
     }
 
     const fetchSectionData = async () => {
@@ -75,6 +80,7 @@ const SeatingClientComponent = ({ initialSections, initialMatchDetails, slugEnd 
                     'aug-10': 3,
                     'aug-13': 4,
                     'aug-17': 5,
+                    'aug-21': 6,
                 };
                 setDateIndex(dateMapping[slugEnd] || 0);
             } catch (error) {
@@ -160,7 +166,7 @@ const SeatingClientComponent = ({ initialSections, initialMatchDetails, slugEnd 
                         </div>
                     </div>
                 </div>
-                <div className='pt-32 lg:px-10 '>
+                <div className='pt-32 lg:px-10 relative'>
                     <Image
                         src={unannounced}
                         height={15}
@@ -248,6 +254,9 @@ const SeatingClientComponent = ({ initialSections, initialMatchDetails, slugEnd 
                             <path d="M1024,1030.53Z" transform="translate(-181.94 -16.23)" fill="#7f7f7f" />
                         </g>
                     </svg>
+                    {/* <div className={`bg-white border shadow-xl border-[#de0a26] h-fit w-fit py-5 px-5 absolute lg:text-xl inset-0 m-auto items-center justify-center ${slugEnd === 'aug-21' ? "flex" : "hidden"}`}>
+                        <p className='text-[#de0a26]'>Online Tickets Sold Out!</p>
+                    </div> */}
                     <p className='text-gray-500 my-5 text-center'>Click to select seating</p>
                 </div>
             </div>

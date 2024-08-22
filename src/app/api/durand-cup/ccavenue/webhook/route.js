@@ -5,14 +5,19 @@ import Section from '@/models/Section';
 import Match from '@/models/Match';
 import User from '@/models/User';
 import { NextResponse } from "next/server";
-import sha256 from "crypto-js/sha256";
-import axios from "axios";
+import crypto from "crypto";
 import QRCode from 'qrcode';
-import { sendDurandEmail } from '@/lib/nodemailer'; // Adjust the import path
-import durandEmailTemplate from '@/templates/durandEmailTemplate.hbs'; // Import the precompiled template
-import durandPdfTemplate from '@/templates/durandPdfTemplate.hbs'; // Import the precompiled template
+import { sendDurandEmail } from '@/lib/nodemailer';
+import durandEmailTemplate from '@/templates/durandEmailTemplate.hbs';
+import durandPdfTemplate from '@/templates/durandPdfTemplate.hbs';
 import { generatePdfFromHtml } from '@/lib/generateTicketPDF';
 
+const verifyChecksum = (data, receivedChecksum) => {
+    const workingKey = process.env.CCAVENUE_WORKING_KEY;
+    const text = Object.keys(data).sort().map(key => data[key]).join('');
+    const checksum = crypto.createHash('sha512').update(text + workingKey).digest('hex');
+    return checksum === receivedChecksum;
+};
 
 const generateQrCodeUrl = async (text) => {
     try {
@@ -45,67 +50,36 @@ export async function POST(req, res) {
     try {
         const data = await req.formData();
 
-        // console.log(data)
-
         if (!data) {
             return new Response(JSON.stringify({ success: false, error: 'Data not available' }), { status: 400 });
         }
-        // console.log(data)
 
-        const status = data.get("code");
-        const merchantId = data.get("merchantId");
-        const transactionId = data.get("transactionId");
+        const status = data.get("order_status");
+        const merchantId = data.get("merchant_id");
+        const transactionId = data.get("tracking_id");
+        const receivedChecksum = data.get("checksum");
 
-        // console.log(status, merchantId, transactionId)
-
-
-        const st = `/pg/v1/status/${merchantId}/${transactionId}` + process.env.NEXT_PUBLIC_PHONEPE_SALT_KEY;
-        // console.log(st)
-        const dataSha256 = sha256(st);
-
-        const checksum = dataSha256 + "###" + process.env.NEXT_PUBLIC_PHONEPE_SALT_INDEX;
-        // console.log(checksum);
-
-        const options = {
-            method: "GET",
-            url: `${process.env.NEXT_PUBLIC_PHONEPE_HOST_URL}/pg/v1/status/${merchantId}/${transactionId}`,
-            headers: {
-                accept: "application/json",
-                "Content-Type": "application/json",
-                "X-VERIFY": checksum,
-                "X-MERCHANT-ID": `${merchantId}`,
-            },
-        };
-
-        const response = await axios.request(options);
-        // console.log(response.data)
-        // console.log("r===", response.data.code);
+        // Verify the checksum
+        if (!verifyChecksum(data, receivedChecksum)) {
+            return new Response(JSON.stringify({ success: false, error: 'Checksum validation failed' }), { status: 400 });
+        }
 
         await connectMongo();
 
         const order = await DurandOrder.findOne({ transactionId });
 
-        // console.log(order)
-
         if (!order) {
             return new Response(JSON.stringify({ success: false, error: 'Order not found' }), { status: 404 });
         }
 
-        // console.log(order)
-
-        if (response.data.code == "PAYMENT_SUCCESS" && order.status !== "SUCCESS") {
-
-            // order.status = "SUCCESS";
-            // await order.save();
+        if (status === "Success" && order.status !== "SUCCESS") {
 
             const section = await Section.findById(order.section);
-            // console.log(section)
             if (!section) {
                 return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
             }
 
             const match = await Match.findById(order.match);
-            // console.log(match)
             if (!match) {
                 return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
             }
@@ -115,11 +89,10 @@ export async function POST(req, res) {
                 return new Response(JSON.stringify({ success: false, error: 'User not found' }), { status: 404 });
             }
 
-            await DurandOrder.findByIdAndUpdate(order._id, { status: "SUCCESS", user: user._id })
+            await DurandOrder.findByIdAndUpdate(order._id, { status: "SUCCESS", user: user._id });
 
             const existingTicket = await DurandTicket.findOne({ orderId: order._id, user: user._id });
             if (existingTicket) {
-                // console.log(`Ticket already exists for order: ${order._id}`);
                 return NextResponse.redirect(`https://onlybees.in/durand-cup/success/`, {
                     status: 301,
                 });
@@ -137,6 +110,7 @@ export async function POST(req, res) {
                 orderId: order._id,
                 isUsed: false,
             });
+
             const qrCodeUrl = await generateQrCodeUrl(newTicket._id.toString());
 
             await newTicket.save();
@@ -144,13 +118,11 @@ export async function POST(req, res) {
             await DurandTicket.findByIdAndUpdate(newTicket._id, { qrLink: qrCodeUrl });
 
             const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
-            // console.log(dateEntry)
             if (!dateEntry) {
                 return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
             }
-            // Update the quantity
-            dateEntry.quantity -= order.quantity; // Reduce quantity by tickets purchased
-            // Save the updated section
+
+            dateEntry.quantity -= order.quantity;
             await section.save();
 
             const sportsBooking = {
@@ -161,12 +133,10 @@ export async function POST(req, res) {
                 qrLink: qrCodeUrl,
             };
 
-            // Update the user document
             await User.findByIdAndUpdate(user._id, {
                 $push: { sportsBookings: sportsBooking },
             });
 
-            // Update user's bookings and update event details
             const updatedMatch = await Match.findByIdAndUpdate(
                 order.match,
                 {
@@ -178,14 +148,10 @@ export async function POST(req, res) {
                 { new: true }
             );
 
-            // Check if event update was successful
             if (!updatedMatch) {
                 return new Response(JSON.stringify({ success: false, error: 'Failed to update event details' }), { status: 500 });
             }
 
-
-
-            // Render the ticket template
             const emailHtml = durandEmailTemplate({
                 name: order.name,
                 email: order.email,
@@ -208,7 +174,6 @@ export async function POST(req, res) {
                 bookingId: order._id.toString(),
             });
 
-            // Render the ticket template
             const pdfHtml = await durandPdfTemplate({
                 name: order.name,
                 email: order.email,
@@ -229,92 +194,29 @@ export async function POST(req, res) {
                 quantity: order.quantity,
                 transactionId: order.transactionId,
                 bookingId: order._id.toString(),
-                image: qrCodeUrl, // reference to the CID of the attached image
+                image: qrCodeUrl,
             });
 
-            // Generate PDF from HTML
             const pdfBuffer = await generatePdfFromHtml(pdfHtml);
 
-            // Send the email with PDF and QR code attachments
             await sendDurandEmail(order.email, `Booking Confirmation & Tickets - Durand Cup`, emailHtml, pdfBuffer, newTicket._id);
 
             return NextResponse.redirect(`https://onlybees.in/durand-cup/success/`, {
                 status: 301,
             });
-        }
-        else if (response.data.code == "PAYMENT_PENDING") {
-            // order.status = "PAYMENT PENDING";
-            // await order.save();
 
-            // await Section.updateOne(
-            //     { _id: order.section, 'availableQuantity.date': order.date },
-            //     { $inc: { 'availableQuantity.$.quantity': order.quantity } }
-            // );
-            // const section = await Section.findById(order.section);
-            // if (!section) {
-            //     return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
-            // }
-
-            // const match = await Match.findById(order.match);
-            // if (!match) {
-            //     return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
-            // }
-
-            // const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
-            // if (!dateEntry) {
-            //     return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
-            // }
-            // Update the quantity
-            // dateEntry.quantity += order.quantity; // Reduce quantity by tickets purchased
-            // // Save the updated section
-            // await section.save();
-
-
-            await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_PENDING", })
+        } else if (status === "Pending") {
+            await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_PENDING" });
             return NextResponse.redirect(`https://onlybees.in/durand-cup/payment-pending/`, {
                 status: 301,
             });
-        }
-        else if(response.data.code == "PAYMENT_SUCCESS" && order.status === "SUCCESS"){
-            return NextResponse.redirect(`https://onlybees.in/durand-cup/success/`, {
-                status: 301,
-            });
-        }
-        else {
-            // order.status = "PAYMENT FAILED";
-            // await order.save();
-            // const section = await Section.findById(order.section);
-            // if (!section) {
-            //     return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
-            // }
-
-            // const match = await Match.findById(order.match);
-            // if (!match) {
-            //     return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
-            // }
-
-            // const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
-            // if (!dateEntry) {
-            //     return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
-            // }
-            // Update the quantity
-            // dateEntry.quantity += order.quantity; // Reduce quantity by tickets purchased
-            // Save the updated section
-            // await section.save();
-
-            // await Section.updateOne(
-            //     { _id: order.section, 'availableQuantity.date': order.date },
-            //     { $inc: { 'availableQuantity.$.quantity': order.quantity } }
-            // );
-
-            await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_FAILED", })
+        } else {
+            await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_FAILED" });
             return NextResponse.redirect(`https://onlybees.in/durand-cup/failed`, {
-                // a 301 status is required to redirect from a POST to a GET route
                 status: 301,
             });
         }
 
-        // return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (error) {
         console.error(error);
         return new Response(JSON.stringify({ success: false, error: 'Server Error' }), { status: 500 });

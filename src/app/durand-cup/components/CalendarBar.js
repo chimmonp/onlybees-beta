@@ -31,6 +31,9 @@ const CalendarBar = () => {
                 <Link href="/durand-cup/tickets/aug-17">
                     <div className={`${pathname==='aug-17'? "bg-[#D9D9D9] text-black": "bg-[#333333]"} py-5 px-2 rounded-l-lg font-semibold text-center hover:scale-y-125 transition-transform duration-200`}>AUGUST 17</div>
                 </Link>
+                <Link href="/durand-cup/tickets/aug-21">
+                    <div className={`${pathname==='aug-21'? "bg-[#D9D9D9] text-black": "bg-[#333333]"} py-5 px-2 rounded-l-lg font-semibold text-center hover:scale-y-125 transition-transform duration-200`}>AUGUST 21</div>
+                </Link>
             </div>
             <div className='lg:hidden w-[100svw] bg-black px-5 gap-10 text-white pt-5'>
                 <div className='flex flex-row justify-between pr-5 pb-2'>
@@ -55,6 +58,9 @@ const CalendarBar = () => {
                     </Link>
                     <Link href="/durand-cup/tickets/aug-17">
                         <div className={`${pathname==='aug-17'? "bg-[#D9D9D9] text-black": "bg-[#333333]"} py-2 px-2 rounded-t-lg font-semibold text-center`}>AUG 17</div>
+                    </Link>
+                    <Link href="/durand-cup/tickets/aug-21">
+                        <div className={`${pathname==='aug-21'? "bg-[#D9D9D9] text-black": "bg-[#333333]"} py-2 px-2 rounded-t-lg font-semibold text-center`}>AUG 21</div>
                     </Link>
                 </div>
             </div>
