@@ -12,6 +12,7 @@ import slfc from "../../../../public/SLFC-LOGO.png"
 import tafc from "../../../../public/tafc.png"
 import rufc from "../../../../public/rufc.png"
 import emami from "../../../../public/emamifc.png"
+import neufc from "../../../../public/neufc.png"
 
 import unannounced from "../../../../public/unannounced.svg"
 
@@ -52,6 +53,9 @@ const SeatingClientComponent = ({ initialSections, initialMatchDetails, slugEnd 
         else if (club === 'Emami East Bengal FC') {
             return emami
         }
+        else if (club === 'NorthEast United FC') {
+            return neufc
+        }
     }
 
     const fetchSectionData = async () => {
@@ -81,6 +85,7 @@ const SeatingClientComponent = ({ initialSections, initialMatchDetails, slugEnd 
                     'aug-13': 4,
                     'aug-17': 5,
                     'aug-21': 6,
+                    'aug-26': 7,
                 };
                 setDateIndex(dateMapping[slugEnd] || 0);
             } catch (error) {

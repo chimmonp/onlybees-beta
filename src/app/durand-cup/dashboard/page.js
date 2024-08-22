@@ -106,11 +106,17 @@ const Organizer = ({ }) => {
                                 {/* <td className='py-7 text-xl font-semibold px-3 leading-none'>{matches[5].totalSales}<br /><span className='font-normal text-[#555555] text-xs'>Total Sales</span></td> */}
                                 <td className='py-7 min-w-fit text-right px-5'><Link href={`/durand-cup/dashboard/match/aug-17`}><span className='bg-black text-white px-4 py-2 rounded-md text-xs text-nowrap'>VIEW DETAILS</span></Link></td>
                             </tr>
-                            <tr key={matches[5]._id} className=' text-center'>
+                            <tr key={matches[6]._id} className=' text-center'>
                                 <td className='py-7 text-left text-xl font-semibold px-5 leading-none'>{matches[6].teamA} vs. {matches[6].teamB}<br /><span className='font-normal text-[#555555] text-xs'>{matches[6].date}</span></td>
                                 {/* <td className='py-7 text-xl font-semibold px-2 text-wrap leading-none'>{matches[5].sold}<br /><span className='font-normal text-[#555555] text-xs'>Tickets</span></td> */}
                                 {/* <td className='py-7 text-xl font-semibold px-3 leading-none'>{matches[5].totalSales}<br /><span className='font-normal text-[#555555] text-xs'>Total Sales</span></td> */}
                                 <td className='py-7 min-w-fit text-right px-5'><Link href={`/durand-cup/dashboard/match/aug-21`}><span className='bg-black text-white px-4 py-2 rounded-md text-xs text-nowrap'>VIEW DETAILS</span></Link></td>
+                            </tr>
+                            <tr key={matches[7]._id} className=' text-center'>
+                                <td className='py-7 text-left text-xl font-semibold px-5 leading-none'>{matches[7].teamA} vs. {matches[7].teamB}<br /><span className='font-normal text-[#555555] text-xs'>{matches[7].date}</span></td>
+                                {/* <td className='py-7 text-xl font-semibold px-2 text-wrap leading-none'>{matches[5].sold}<br /><span className='font-normal text-[#555555] text-xs'>Tickets</span></td> */}
+                                {/* <td className='py-7 text-xl font-semibold px-3 leading-none'>{matches[5].totalSales}<br /><span className='font-normal text-[#555555] text-xs'>Total Sales</span></td> */}
+                                <td className='py-7 min-w-fit text-right px-5'><Link href={`/durand-cup/dashboard/match/aug-26`}><span className='bg-black text-white px-4 py-2 rounded-md text-xs text-nowrap'>VIEW DETAILS</span></Link></td>
                             </tr>
                         </tbody>
                     </table>
