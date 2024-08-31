@@ -2,6 +2,7 @@ import connectMongo from '@/lib/mongodb';
 import DurandOrder from '@/models/DurandOrder';
 import DurandTicket from '@/models/DurandTicket';
 import Section from '@/models/Section';
+import SeatLock from '@/models/SeatLock';
 import Match from '@/models/Match';
 import User from '@/models/User';
 import { NextResponse } from "next/server";
@@ -150,8 +151,13 @@ export async function POST(req, res) {
             }
             // Update the quantity
             dateEntry.quantity -= order.quantity; // Reduce quantity by tickets purchased
+            // Decrement locked seats by the quantity
+            dateEntry.lockedSeats -= order.quantity;
             // Save the updated section
             await section.save();
+
+            // Delete the seat lock
+            await SeatLock.deleteOne({ sectionId: section._id, date: match.slug, transactionId: order.transactionId });
 
             const sportsBooking = {
                 match: order.match,
@@ -269,6 +275,30 @@ export async function POST(req, res) {
             // // Save the updated section
             // await section.save();
 
+            const section = await Section.findById(order.section);
+            // console.log(section)
+            if (!section) {
+                return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
+            }
+
+            const match = await Match.findById(order.match);
+            // console.log(match)
+            if (!match) {
+                return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
+            }
+
+            const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
+            // console.log(dateEntry)
+            if (!dateEntry) {
+                return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
+            }
+            // Update the locked quantity
+            dateEntry.lockedSeats -= order.quantity;
+            // Save the updated section
+            await section.save();
+
+            // Delete the seat lock
+            await SeatLock.deleteOne({ sectionId: section._id, date: match.slug, transactionId: order.transactionId });
 
             await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_PENDING", })
             return NextResponse.redirect(`https://onlybees.in/durand-cup/payment-pending/`, {
@@ -307,6 +337,33 @@ export async function POST(req, res) {
             //     { $inc: { 'availableQuantity.$.quantity': order.quantity } }
             // );
 
+            const section = await Section.findById(order.section);
+            // console.log(section)
+            if (!section) {
+                return new Response(JSON.stringify({ success: false, error: 'Section Not Found' }), { status: 404 });
+            }
+
+            const match = await Match.findById(order.match);
+            // console.log(match)
+            if (!match) {
+                return new Response(JSON.stringify({ success: false, error: 'Match Not Found' }), { status: 404 });
+            }
+
+            const dateEntry = section.availableQuantity.find(entry => entry.date === match.slug);
+            // console.log(dateEntry)
+            if (!dateEntry) {
+                return new Response(JSON.stringify({ success: false, error: 'Date Not Available' }), { status: 400 });
+            }
+
+            // Decrement locked seats by the quantity
+            dateEntry.lockedSeats -= order.quantity;
+            // Save the updated section
+            await section.save();
+
+            // Delete the seat lock
+            await SeatLock.deleteOne({ sectionId: section._id, date: match.slug, transactionId: order.transactionId });
+
+
             await DurandOrder.findByIdAndUpdate(order._id, { status: "PAYMENT_FAILED", })
             return NextResponse.redirect(`https://onlybees.in/durand-cup/failed`, {
                 // a 301 status is required to redirect from a POST to a GET route
@@ -316,6 +373,7 @@ export async function POST(req, res) {
 
         // return new Response(JSON.stringify({ success: true }), { status: 200 });
     } catch (error) {
+
         console.error(error);
         return new Response(JSON.stringify({ success: false, error: 'Server Error' }), { status: 500 });
     }

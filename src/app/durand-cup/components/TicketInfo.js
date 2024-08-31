@@ -9,8 +9,21 @@ import { useDurand } from "@/context/DurandContext"
 
 import { usePathname } from "next/navigation"
 
+import { v4 as uuidv4 } from 'uuid';
+
+//Components
+import Loading from '@/app/components/Loading'
+
+import { useRouter } from 'next/navigation'
+
+
+
+
+
 
 const TicketInfo = ({ tickets, setTickets, sectionData, matchDetails }) => {
+
+    const router = useRouter()
 
     if (!sectionData) {
         return <div>Loading...</div>;
@@ -19,12 +32,22 @@ const TicketInfo = ({ tickets, setTickets, sectionData, matchDetails }) => {
     const { setData } = useDurand();
     const [avlQuantity, setAvlQuantity] = useState(0)
 
+    const [isLoading, setIsLoading] = useState(false)
+
     const pathname = usePathname().split('/').pop();
+
+    const [transactionId, setTransactionId] = useState()
+
+    useEffect(() => {
+        // Generate a transaction ID when the component mounts
+        let transactionIdGen = "Tr-" + uuidv4().toString(36).slice(-6);
+        setTransactionId(transactionIdGen)
+    }, [])
 
 
     const getQuantityForDate = (date, availableQuantity) => {
         const match = availableQuantity.find(item => item.date === date);
-        return match ? match.quantity : 0;
+        return match ? match.quantity - match.lockedSeats : 0;
     };
 
 
@@ -39,6 +62,7 @@ const TicketInfo = ({ tickets, setTickets, sectionData, matchDetails }) => {
             sectionData: sectionData,
             tickets: tickets,
             matchDetails: matchDetails,
+            transactionId: transactionId, // Add transactionId to the data
             amount: {
                 subtotalAmt,
                 convFeeAmt,
@@ -57,16 +81,51 @@ const TicketInfo = ({ tickets, setTickets, sectionData, matchDetails }) => {
     //     console.log(sectionData)
     // }, [ sectionData ] )
 
+    const handleBuy = async () => {
+        //Check if STILL AVAILABLE and proceed
+
+        // const transactionId = "Tr-" + uuidv4().toString(36).slice(-6);
+        setIsLoading(true)
+
+        try {
+            const response = await fetch('/api/durand-cup/check-and-lock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    sectionId: sectionData._id,
+                    date: pathname,  // Assuming pathname is the date
+                    transactionId: transactionId, // Replace with the actual user ID
+                    requestedSeats: tickets
+                })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                setIsLoading(false)
+                alert(data.error);
+                return;
+            }
+            setIsLoading(false)
+            // Proceed to checkout
+            router.push(`/durand-cup/tickets/buy`)
+        } catch (error) {
+            setIsLoading(false)
+            console.error('Error checking and locking seats:', error);
+            alert('An error occurred. Please try again.');
+        }
+
+    }
+
 
     return (
         <div className='lg:bg-white bg-[#D9D9D9] lg:w-[25svw] lg:py-10 text-center flex flex-col justify-between'>
+            {isLoading && <Loading />}
             <div className='lg:pb-0 pb-56 lg:pt-0 pt-20 px-5'>
                 <select name="tickets" id="tickets" value={tickets} onChange={(e) => setTickets(e.target.value)} className='lg:bg-[#D9D9D9] bg-white py-3 w-full rounded-md px-4'>
                     <option value={1}>1 TICKET</option>
-                    <option value={2}>2 TICKETS</option>
-                    <option value={3}>3 TICKETS</option>
-                    <option value={4}>4 TICKETS</option>
-                    <option value={5}>5 TICKETS</option>
                     {/* <option value={6}>6 TICKETS</option>
                     <option value={7}>7 TICKETS</option>
                     <option value={8}>8 TICKETS</option>
@@ -98,9 +157,9 @@ const TicketInfo = ({ tickets, setTickets, sectionData, matchDetails }) => {
                     {(tickets > avlQuantity) && (tickets > 1) && <p className='text-xs text-[#bd3a2e]'>Unavailable</p>}
                 </div>
                 {tickets > 0 && sectionData.price && tickets <= avlQuantity ? (
-                    <Link href="/durand-cup/tickets/buy">
+                    <div onClick={handleBuy}>
                         <div className='bg-[#00FF38] mt-3 py-5 mb-5 rounded-md font-semibold'>BOOK NOW</div>
-                    </Link>
+                    </div>
                 ) : (
                     <div className='bg-[#cccccc] opacity-40 mt-3 py-5 mb-5 rounded-md font-semibold cursor-not-allowed'>BOOK NOW</div>
                 )}

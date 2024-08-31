@@ -43,6 +43,51 @@ const page = () => {
     const [isEmailValid, setIsEmailValid] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const [timeLeft, setTimeLeft] = useState(10 * 60); // 10 minutes in seconds
+    const [timerExpired, setTimerExpired] = useState(false); // New state to track timer expiry
+
+
+    useEffect(() => {
+        // Timer countdown logic
+        const timer = setInterval(() => {
+            setTimeLeft((prevTimeLeft) => {
+                if (prevTimeLeft <= 1) {
+                    clearInterval(timer);
+                    setTimerExpired(true); // Set timer expired
+                    handleTimerExpiry(); // Call function to handle expiry
+                    return 0;
+                }
+                return prevTimeLeft - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(timer); // Cleanup timer on component unmount
+    }, []);
+
+    // Function to handle timer expiry
+    const handleTimerExpiry = async () => {
+        try {
+            // Call API to clear locked seats and delete seat lock document
+            await axios.post('/api/durand-cup/unlock-seats', {
+                sectionId: durandData.sectionData._id,
+                date: durandData.matchDetails.slug,
+                transactionId: durandData.transactionId
+            });
+            router.push("/durand-cup/tickets/aug-26"); // Redirect user to ticket page
+        } catch (error) {
+            console.error('Error unlocking seats:', error);
+        }
+        alert("Time is up! Your seat reservation has expired.");
+        router.push("/durand-cup/tickets/aug-26"); // Redirect user to ticket page
+    };
+
+    // Format time as MM:SS
+    const formatTime = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+    };
+
     useEffect(() => {
         const loadScript = () => {
             const script = document.createElement('script');
@@ -158,9 +203,13 @@ const page = () => {
 
             if (res.ok) {
                 const data = await res.json();
-                return data.success;
+                let returnData = {
+                    status: data.success,
+                    user: data.user
+                }
+                return returnData;
             } else {
-                return false;
+                return {status: false, user: null};
             }
         } catch (error) {
             console.log(error);
@@ -209,10 +258,9 @@ const page = () => {
         // e.preventDefault();
         // alert("make payment")
 
-        const transactionId = "Tr-" + uuidv4().toString(36).slice(-6);
-
+        // const transactionId = "Tr-" + uuidv4().toString(36).slice(-6); 
         const orderPayload = {
-            transactionId,
+            transactionId: durandData.transactionId,
             userId: user.userData?._id || '6671a57c0e924ab6086fbd36',
             match: durandData.matchDetails._id,
             status: "PENDING",
@@ -243,12 +291,12 @@ const page = () => {
 
                 const payload = {
                     merchantId: process.env.NEXT_PUBLIC_PHONEPE_MERCHANT_ID,
-                    merchantTransactionId: transactionId,
+                    merchantTransactionId: durandData.transactionId,
                     merchantUserId: 'OB-' + uuidv4().toString(36).slice(-6),
                     amount: durandData.amount.totalAmtCalc * 100,
-                    redirectUrl: `https://onlybees.in/api/phonepe/status/${transactionId}`,
+                    redirectUrl: `https://onlybees.in/api/phonepe/status/${durandData.transactionId}`,
                     redirectMode: "POST",
-                    callbackUrl: `https://onlybees.in/api/phonepe/status/${transactionId}`,
+                    callbackUrl: `https://onlybees.in/api/phonepe/status/${durandData.transactionId}`,
                     mobileNumber: ph,
                     paymentInstrument: {
                         type: "PAY_PAGE",
@@ -429,12 +477,59 @@ const page = () => {
 
         // console.log(user)
         if (user.userData) {
-            makePayment()
+            const matchId = "66c77679828a6281539e9e79";
+
+            let hasBooking = false;
+            // Loop through the user's sportsBookings to find a match
+            for (let booking of user.userData.sportsBookings) {
+                if (booking.match === matchId) {
+                    hasBooking = true;
+                    break;
+                }
+            }
+            if (hasBooking) {
+                // Unlock seats and redirect if booking exists
+                await axios.post('/api/durand-cup/unlock-seats', {
+                    sectionId: durandData.sectionData._id,
+                    date: durandData.matchDetails.slug,
+                    transactionId: durandData.transactionId
+                });
+                alert("Already Bought");
+                router.push("/durand-cup/tickets/aug-26");
+                return;
+            }
+            else {
+                makePayment()
+            }
+            // makePayment()
         }
         else {
-            userExists().then((exists) => {
-                if (exists) {
-                    // saveOrder(ticket, { ...orderDetails, paymentId });
+            userExists().then(async (exists) => {
+                if (exists.status) {
+                    const matchId = "66c77679828a6281539e9e79";
+
+                    let hasBooking = false;
+                    // Loop through the user's sportsBookings to find a match
+                    for (let booking of exists.user.sportsBookings) {
+                        if (booking.match === matchId) {
+                            hasBooking = true;
+                            break;
+                        }
+                    }
+                    if (hasBooking) {
+                        // Unlock seats and redirect if booking exists
+                        await axios.post('/api/durand-cup/unlock-seats', {
+                            sectionId: durandData.sectionData._id,
+                            date: durandData.matchDetails.slug,
+                            transactionId: durandData.transactionId
+                        });
+                        alert("Already Bought");
+                        router.push("/durand-cup/tickets/aug-26");
+                        return;
+                    }
+                    else {
+                        makePayment()
+                    }
                     makePayment()
                 } else {
                     createNewUser().then((created) => {
@@ -456,6 +551,9 @@ const page = () => {
                 <div className='w-screen bg-white lg:w-1/3 pb-40'>
                     <div className='mt-10'>
                         <h2 className='text-black font-semibold text-xl'>Order Summary</h2>
+                        <div className='text-black text-left text-md font-bold mt-2'>
+                            <p>Time Left: {formatTime(timeLeft)}</p>
+                        </div>
                         <div className='mt-5 text-sm'>
                             <div className='flex justify-between border-b border-gray-600 py-2'>
                                 <span>{durandData.sectionData.bowl}, {durandData.sectionData.gate}<span className='bg-black text-white text-sm font-semibold px-4 rounded-full ml-3'>x{durandData.tickets}</span></span>

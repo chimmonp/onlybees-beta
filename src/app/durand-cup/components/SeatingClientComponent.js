@@ -259,9 +259,9 @@ const SeatingClientComponent = ({ initialSections, initialMatchDetails, slugEnd 
                             <path d="M1024,1030.53Z" transform="translate(-181.94 -16.23)" fill="#7f7f7f" />
                         </g>
                     </svg>
-                    {/* <div className={`bg-white border shadow-xl border-[#de0a26] h-fit w-fit py-5 px-5 absolute lg:text-xl inset-0 m-auto items-center justify-center ${slugEnd === 'aug-21' ? "flex" : "hidden"}`}>
+                    <div className={`bg-white border shadow-xl border-[#de0a26] h-fit w-fit py-5 px-5 absolute lg:text-xl inset-0 m-auto items-center justify-center ${slugEnd === 'aug-26' ? "flex" : "hidden"}`}>
                         <p className='text-[#de0a26]'>Online Tickets Sold Out!</p>
-                    </div> */}
+                    </div>
                     <p className='text-gray-500 my-5 text-center'>Click to select seating</p>
                 </div>
             </div>

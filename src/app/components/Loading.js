@@ -36,7 +36,7 @@ const Loading = () => {
     //     }
     //   `}</style>
     // </div>
-    <div className='bg-black w-[100svw] h-[100svh]'>
+    <div className='bg-black w-[100svw] h-[100svh] fixed top-0 left-0 z-50'>
       <div className="flex h-full w-full items-center justify-center bg-opacity-50">
         <div className="animate-spin">
           <Image src={beesCircle} alt="Loading..." width={100} height={100} />

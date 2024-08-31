@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const sectionSchema = new mongoose.Schema({
+const testSectionSchema = new mongoose.Schema({
     _id: { 
         type: String,
         required: true,
@@ -22,7 +22,6 @@ const sectionSchema = new mongoose.Schema({
         {
             date: { type: String, required: true },
             quantity: { type: Number, required: true },
-            lockedSeats: { type: Number, required: true },
         }
     ],
     price: {
@@ -31,4 +30,4 @@ const sectionSchema = new mongoose.Schema({
     },
 });
 
-export default mongoose.models.Section || mongoose.model('Section', sectionSchema);
+export default mongoose.models.TestSection || mongoose.model('TestSection', testSectionSchema);

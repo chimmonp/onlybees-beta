@@ -58,7 +58,7 @@ const OrganizerEvent = () => {
             // Filter bookings with status "SUCCESS" only
             const successfulBookings = data.orders.filter(order => order.status === "SUCCESS");
             // Sort bookings in descending order
-            successfulBookings.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            successfulBookings.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
             setBookings(successfulBookings);
             setTotalEntries(successfulBookings.length);
@@ -254,7 +254,7 @@ const OrganizerEvent = () => {
                             <th className='px-3 py-3 font-medium text-sm'>Tickets</th>
                             <th className='px-3 py-3 font-medium text-sm'>Bowl</th>
                             <th className='px-3 py-3 font-medium text-sm'>Gate</th>
-                            <th className='px-3 py-3 font-medium text-sm'>Entry</th>
+                            <th className='px-3 py-3 font-medium text-sm'>T-ID</th>
                             {/* <th className='px-3 py-3 font-medium text-sm'>Payment Status</th> */}
                             <th className='px-3 py-3 font-medium text-sm'>Scanned</th>
                         </tr>
@@ -281,7 +281,7 @@ const OrganizerEvent = () => {
                                     <td className='text-center px-3'>{booking.quantity}</td>
                                     <td className='px-3'>{booking.sectionInfo.bowl}</td>
                                     <td className='px-3'>{booking.sectionInfo.gate}</td>
-                                    <td className='px-3'>{booking.sectionInfo.entry}</td>
+                                    <td className='px-3 text-nowrap'>{booking.transactionId}</td>
                                     {/* <td className={`px-3 ${stat === "SUCCESS" ? "text-[#1baf39]" : "text-[#de0a26]"}`}>{stat}</td> */}
                                     <td className={`py-2 px-2 text-wrap font-mono text-center ${booking.ticket[0].isUsed?"text-[#1baf39]":"text-[#bd3a2e]"}`}>{booking.ticket[0].isUsed?"Yes":"No"}</td>
                                 </tr>
