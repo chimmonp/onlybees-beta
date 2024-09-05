@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Reservation Confirmation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            overflow: hidden;
+            width: 600px;
+            margin: 50px auto;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+
+        .header {
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .details-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 5% 0;
+        }
+
+        .left {
+            width: 60%;
+        }
+
+        .right {
+            width: 40%;
+            padding: 5%;
+        }
+
+        .details {
+            padding: 0 3rem;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .details h2 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .details p {
+            margin: 5px 0;
+            font-size: 0.8rem;
+        }
+
+        .border-dashed {
+            border-bottom: 4px dashed rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            border-spacing: 50px;
+        }
+
+        .footer {
+            background-color: black;
+            text-align: center;
+            padding: 5%;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Reservation Confirmation</h1>
+        </div>
+        <div class="content">
+            <p>{{name}}, your reservation has been confirmed!</p>
+        </div>
+        <div class="border-dashed"></div>
+        <div class="details-container">
+            <div class="left">
+                <div class="details">
+                    <h2>Reservation Details</h2>
+                    <p><b>Reservation ID:</b> {{reservationId}}</p>
+                    <p><b>Date:</b> {{reservationDate}}</p>
+                    <p><b>Time:</b> {{reservationTime}}</p>
+                    <p><b>Table:</b> {{tableName}}</p>
+                </div>
+                <div class="details">
+                    <h2>Your Details</h2>
+                    <p><b>Name:</b> {{name}}</p>
+                    <p><b>Email:</b> {{email}}</p>
+                    <p><b>Phone:</b> {{phone}}</p>
+                </div>
+            </div>
+            <div class="right">
+                <div class="details">
+                    <h2>Restaurant Details</h2>
+                    <p><b>Name:</b> {{restaurantName}}</p>
+                    <p><b>Section:</b> {{restaurantSectionName}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Thank you for choosing The Yeastern Civilization!</p>
+        </div>
+    </div>
+</body>
+
+</html>

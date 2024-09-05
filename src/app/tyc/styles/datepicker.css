@@ -1,0 +1,84 @@
+
+
+/* General calendar container size adjustments */
+.react-datepicker__calendar {
+  font-size: 0.75rem; 
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Header size adjustments */
+.react-datepicker__header {
+  font-size: 1.25rem; /* Smaller font size for the header */
+}
+
+/* Day cell size adjustments */
+.react-datepicker__day {
+  width: 2rem; /* Smaller width for day cells */
+  height: 2rem; /* Smaller height for day cells */
+  line-height: 2rem; /* Centers the text within the day cell */
+  font-size: 1rem; /* Smaller font size for day cells */
+}
+
+/* Day name cell size adjustments */
+.react-datepicker__day-name {
+  width: 2rem; /* Smaller width for day names */
+  height: 2rem; /* Smaller height for day names */
+  font-size: 0.9rem; /* Smaller font size for day names */
+}
+
+/* Current month text size adjustments */
+.react-datepicker__current-month {
+  font-size: 1.25rem; /* Smaller font size for the current month */
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 768px) {
+  .react-datepicker__calendar {
+    font-size: 0.6rem; /* Even smaller font size on very small screens */
+  }
+
+  .react-datepicker__header {
+    font-size: 1rem; /* Further reduced font size for the header */
+  }
+
+  .react-datepicker__day {
+    width: 1.5rem; /* Smaller width for day cells */
+    height: 1.5rem; /* Smaller height for day cells */
+    line-height: 1.5rem; /* Centers the text within the day cell */
+    font-size: 0.75rem; /* Smaller font size for day cells */
+  }
+
+  .react-datepicker__day-name {
+    width: 1.5rem; /* Smaller width for day names */
+    height: 1.5rem; /* Smaller height for day names */
+    font-size: 0.7rem; /* Smaller font size for day names */
+  }
+
+  .react-datepicker__current-month {
+    font-size: 1rem; /* Further reduced font size for the current month */
+  }
+}
+
+
+/* Adjust styles specifically for mobile screens */
+@media (max-width: 767px) {
+  .small-dropdown {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #e2e8f0;
+    padding: 10px;
+    width: 100%; /* Ensure it takes full width */
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+  }
+
+  .small-dropdown:focus {
+    border-color: transparent;
+    outline: none;
+  }
+}
