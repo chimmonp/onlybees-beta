@@ -6,11 +6,11 @@ import Footer from '../components/footer';
 
 const page = () => {
   return (
-    <div>
-        {/* <Barstage/> */}
-        <Ihmage/>
-        <Footer/>
-    </div>
+    <div className='bg-white text-black'>
+          {/* <Barstage/> */}
+          <Ihmage/>
+          <Footer/>
+      </div>
   )
 }
 

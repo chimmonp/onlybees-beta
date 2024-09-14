@@ -6,6 +6,7 @@
 import Navbar from "../../components/Navbar";
 import EventDetails from "../../components/EventDetails";
 import Footer from "../../components/Footer";
+import CookiesModal from '../../components/CookiesModal'
 
 // import sendMetaEvent from "@/lib/sendEventMeta";
 
@@ -80,6 +81,7 @@ export default function Event({ params }) {
       <Navbar mode="dark" />
       <EventDetails slug={slug} />
       <Footer mode="dark" />
+      <CookiesModal />
     </div>
   );
 }

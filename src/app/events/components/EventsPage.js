@@ -44,45 +44,63 @@ const EventsPage = () => {
     };
 
     const fetchCities = async () => {
+        setLoading(true);
         try {
             const response = await fetch(`/api/events/fetchcities`);
             const result = await response.json();
             if (result.success) {
                 setCities(result.data);
+                setLoading(false);
             } else {
                 console.error('Error fetching cities:', result.error);
+                setLoading(false);
             }
         } catch (error) {
             console.error('Error fetching cities:', error);
+            setLoading(false);
         }
     };
 
     useEffect(() => {
+        setUpcomingEvents([])
         fetchEvents(selectedCity);
-
     }, [selectedCity]);
 
     useEffect(() => {
-        const storedCity = localStorage.getItem('selectedCity');
-        if(storedCity){
-            setSelectedCity(storedCity);
-            fetchEvents(storedCity);
-            fetchCities()
-        } else {
-            fetchCities()
-            setIsModalOpen(true);
+        if (selectedCity) {
+            fetchEvents(selectedCity);
+        }
+        else {
+            const storedCity = localStorage.getItem('selectedCity');
+            if (storedCity) {
+                if (storedCity === 'null') {
+                    fetchCities()
+                    setIsModalOpen(true);
+                }
+                else {  
+                    setSelectedCity(storedCity);
+                    fetchEvents(storedCity);
+                    fetchCities()
+                }
+            } else {
+                fetchCities()
+                setIsModalOpen(true);
+            }
         }
     }, []);
 
+    // useEffect(() => {
+
+    // }, []);
 
     const handleSelectCity = (city) => {
         setSelectedCity(city);
         localStorage.setItem('selectedCity', city);
         setIsModalOpen(false);
         // Track the selected city with Meta Pixel
-        // if (window.fbq) {
-        //     window.fbq('trackCustom', 'CitySelected', { city });
-        // }
+        if (window.fbq) {
+            window.fbq('trackCustom', 'CitySelected', { city });
+        }
     };
 
     if (loading) return <Loading />
@@ -99,7 +117,7 @@ const EventsPage = () => {
                     alt="Find your city"
                 />
             </div>
-            <div className='md:mb-20 mb-10 text-xs'><FmdGoodIcon sx={{fontSize: "0.9rem", marginBottom: "2px"}}/> {selectedCity}</div>
+            <div className='md:mb-20 mb-10 text-xs'><FmdGoodIcon sx={{ fontSize: "0.9rem", marginBottom: "2px" }} /> {selectedCity}</div>
             <div className="events grid w-full mt-5" style={{ scrollbarWidth: 'none' }}>
                 {upcomingEvents.length === 0 && <div className='text-center w-full'>
                     <h2 className='mx-auto w-full text-sm px-10'>There are no upcoming events in this location :(</h2>
@@ -115,7 +133,7 @@ const EventsPage = () => {
                     ))}
                 </div>
             </div>
-            {pastEvents.length!==0 && <div className="events grid w-full mt-10" style={{ scrollbarWidth: 'none' }}>
+            {pastEvents.length !== 0 && <div className="events grid w-full mt-10" style={{ scrollbarWidth: 'none' }}>
                 <h2 className='mb-5 text-2xl font-medium'>Past Events</h2>
                 <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mx-auto">
                     {pastEvents.map((event, index) => (

@@ -240,7 +240,7 @@ const ImageComponent = () => {
           <span className="relative inline-block">
             <button className="relative z-10 text-base sm:text-lg md:text-xl font-medium" onClick={handleNavigate}>BAR SECTION</button>
           </span>
-          <button className="ml-4 text-base sm:text-lg md:text-xl font-medium underline cursor-not-allowed">RESTAURANT SECTION</button>
+          <button className="ml-4 text-base sm:text-lg md:text-xl font-medium underline cursor-none">RESTAURANT SECTION</button>
         </motion.div>
 
         {/* Image */}

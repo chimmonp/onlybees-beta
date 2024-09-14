@@ -416,6 +416,10 @@ const Ticket = ({ event }) => {
         page={page}
         setPage={setPage}
         event={event}
+        setTotalAmt={setTotalAmt}
+        convFee={convFee}
+        platformFee={platformFee}
+        subtotal={subtotal}
       />}
       {page === "ticket" && (
         <TicketSelection
@@ -431,6 +435,7 @@ const Ticket = ({ event }) => {
           event={event}
           tickets={tickets}
           totalAmt={totalAmt}
+          setTotalAmt={setTotalAmt}
           convFee={convFee}
           platformFee={platformFee}
           form={form}

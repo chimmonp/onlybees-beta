@@ -6,8 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from 'next/navigation';
 import LogoutConfirmation from '@/app/components/LogoutConfirmation';
 
-const Header = ({ mode, page, setPage, event}) => {
-
+const Header = ({ mode, page, setPage, event, setTotalAmt, convFee, platformFee, subtotal }) => {
 
     const router = useRouter();
     const [ isOpen, setIsOpen ] = useState(false);
@@ -21,6 +20,8 @@ const Header = ({ mode, page, setPage, event}) => {
             // console.log(baseAmount)
             // setTotalAmt(baseAmount);
             setPage("ticket")
+            setTotalAmt(subtotal+convFee+platformFee)
+
         }
         else if (page === "details") {
             setPage("ticket")
@@ -29,7 +30,6 @@ const Header = ({ mode, page, setPage, event}) => {
 
     const handleClose = () => {
         setIsOpen(true);
-        console.log(event);
     }
 
     const handleConfirm = () => {

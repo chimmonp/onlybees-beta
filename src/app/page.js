@@ -18,6 +18,7 @@ import Clients from './components/Clients';
 import SecondaryText from './components/SecondaryText';
 import FormSubmit from './components/FormSubmit';
 import Loading from './components/Loading';
+import CookiesModal from './components/CookiesModal';
 
 //Assets
 import text from "../../public/Text.svg"
@@ -89,6 +90,7 @@ const Home = () => {
         <FormSubmit />
       </div>
       <Footer mode="light" />
+      <CookiesModal />
     </div>
   );
 }

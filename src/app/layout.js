@@ -38,7 +38,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        {/* <script
+        <script
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)
@@ -61,7 +61,7 @@ export default function RootLayout({ children }) {
             style={{ display: 'none' }}
             src="https://www.facebook.com/tr?id=7756034437819795&ev=PageView&noscript=1"
           />
-        </noscript> */}
+        </noscript>
         {/* <meta httpEquiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'"></meta> */}
         {/* <meta name="referrer" content="strict-origin-when-cross-origin" /> */}
         {/* <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.phonepe.com; script-src 'self' https://*.phonepe.com 'unsafe-inline' 'unsafe-eval'; style-src 'self' https://*.phonepe.com 'unsafe-inline'; img-src 'self' data: https://*.cloudinary.com https://*.freepik.com; connect-src 'self' https://*.phonepe.com; frame-src 'self' https://*.phonepe.com;" /> */}
