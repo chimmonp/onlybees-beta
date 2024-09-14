@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import PhoneInput from 'react-phone-input-2';
 import "react-phone-input-2/lib/style.css";
+import axios from 'axios';
 
 // Import user context for authentication and user state management
 import { useAuth } from '@/context/AuthContext';
@@ -152,7 +153,7 @@ const ImageComponent = () => {
       transactionId: transactionId,
       userId: user?.userData?._id || '6671a4ac0e924ab6086fbd22',  // Replace 'dummy_user_id' with actual user ID if needed
       status: 'PENDING',
-      amount: 2,  // Example amount, replace with actual amount
+      amount: 2000,  // Example amount, replace with actual amount
       currency: 'INR',
       notes: `Reservation for table ${selectedTable} Bar TYC`,
       name: name,

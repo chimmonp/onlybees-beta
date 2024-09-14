@@ -54,7 +54,7 @@ const ImageComponent = () => {
   const { ref: formRef, inView: formInView } = useInView({ threshold: 0.2, triggerOnce: true });
 
   const handleNavigate = () => {
-    router.push('/bar');
+    router.push('/tyc/bar');
   };
 
   const handleChange = (e) => {
@@ -153,7 +153,7 @@ const ImageComponent = () => {
       transactionId: transactionId,
       userId: user?.userData?._id || '6671a4ac0e924ab6086fbd22',  // Replace 'dummy_user_id' with actual user ID if needed
       status: 'PENDING',
-      amount: 2,  // Example amount, replace with actual amount
+      amount: 2000,  // Example amount, replace with actual amount
       currency: 'INR',
       notes: `Reservation for table ${selectedTable} Restaurant TYC`,
       name: name,
