@@ -34,7 +34,10 @@ export const GET = async (req) => {
         // Aggregate pipeline to fetch bookings with tickets for the specified event
         const pipeline = [
             {
-                $match: { event: event._id }
+                $match: { 
+                    event: event._id, 
+                    status: { $in: ['created', 'SUCCESS'] } // Filter orders with status 'created' or 'SUCCESS'
+                }
             },
             {
                 $lookup: {
@@ -44,12 +47,6 @@ export const GET = async (req) => {
                     as: 'tickets'
                 }
             },
-            // {
-            //     $skip: (page - 1) * limit
-            // },
-            // {
-            //     $limit: limit
-            // },
             {
                 $project: {
                     _id: 1,
@@ -59,6 +56,8 @@ export const GET = async (req) => {
                     name: 1,
                     email: 1,
                     phone: 1,
+                    status: 1,
+                    createdAt: 1,
                     ticket: '$tickets'
                 }
             }

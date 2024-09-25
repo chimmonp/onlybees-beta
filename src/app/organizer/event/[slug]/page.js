@@ -48,7 +48,7 @@ const OrganizerEvent = () => {
             const data = await response.json();
             setEventDetails(data.event)
             //Sort bookings in descending
-            data.orders.sort((a, b) => new Date(b.ticket[0].bookingDate) - new Date(a.ticket[0].bookingDate));
+            data.orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setBookings(data.orders);
             setTotalEntries(data.totalEntries);
             setTotalTickets(data.totalTicketNumbers);
@@ -126,14 +126,30 @@ const OrganizerEvent = () => {
         { label: 'Ticket Types', key: 'ticketTypes' },
     ];
 
-    const csvData = bookings.map((booking) => ({
+    // const csvData = bookings.map((booking) => ({
+    //     name: booking.name || 'undefined',
+    //     // ticketNumber: booking.ticket[0]._id || 'undefined',
+    //     ticketNumber: (booking.ticket && booking.ticket.length > 0) ? booking.ticket[0]._id : 'undefined',
+    //     email: booking.email || 'undefined',
+    //     phone: booking.phone || 'undefined',
+    //     amount: booking.amount || 'undefined',
+    //     // checkInStatus: booking.ticket[0].isUsed ? 'Yes' : 'No',
+    //     checkInStatus: (booking.ticket && booking.ticket.length > 0) ? booking.ticket[0].isUsed ? 'Yes' : 'No' : 'undefined',
+    //     bookingDate: new Date(booking.createdAt).toLocaleString() || 'undefined',
+    //     totalQuantity: booking.ticket[0].ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0) || 'undefined',
+    //     ticketTypes: booking.ticket[0].ticketDetails.map(detail => detail.ticketType).join(', ') || 'undefined',
+    // }));
+
+    const csvData = bookings
+    .filter(booking => booking.ticket && booking.ticket.length !== 0) // Filter out bookings where ticket array is empty
+    .map((booking) => ({
         name: booking.name || 'undefined',
         ticketNumber: booking.ticket[0]._id || 'undefined',
         email: booking.email || 'undefined',
         phone: booking.phone || 'undefined',
         amount: booking.amount || 'undefined',
         checkInStatus: booking.ticket[0].isUsed ? 'Yes' : 'No',
-        bookingDate: new Date(booking.ticket[0].bookingDate).toLocaleString() || 'undefined',
+        bookingDate: new Date(booking.createdAt).toLocaleString() || 'undefined',
         totalQuantity: booking.ticket[0].ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0) || 'undefined',
         ticketTypes: booking.ticket[0].ticketDetails.map(detail => detail.ticketType).join(', ') || 'undefined',
     }));
@@ -227,19 +243,21 @@ const OrganizerEvent = () => {
                                 const ticketTypes = booking.ticket[0].ticketDetails.map(detail => detail.ticketType).join(', ');
                                 const totalQuantity = booking.ticket[0].ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0);
 
-                                return (
-                                    <tr key={booking.ticket[0]._id} className='text-left border-b border-gray-400 border-opacity-25'>
-                                        <td className='px-3'>{booking.name || 'undefined'}</td>
-                                        <td className='py-2 px-2 text-wrap font-mono'>{booking.ticket[0]._id}</td>
-                                        <td className='px-3'>{booking.email || 'undefined'}</td>
-                                        <td className='px-3'>{booking.phone || 'undefined'}</td>
-                                        <td className='px-3'>{booking.amount}</td>
-                                        <td className={`${booking.ticket[0].isUsed ? 'text-[#1baf39]' : 'text-[#bd3a2e]'} text-center px-3`}>{booking.ticket[0].isUsed ? 'Yes' : 'No'}</td>
-                                        <td className='px-3'>{new Date(booking.ticket[0].bookingDate).toLocaleString()}</td>
-                                        <td className='text-center px-3'>{totalQuantity}</td>
-                                        <td className='px-3'>{ticketTypes}</td>
-                                    </tr>
-                                )
+                                if (booking.status === 'SUCCESS' || booking.status === 'created' && booking.ticket.length!==0) {
+                                    return (
+                                        <tr key={booking.ticket[0]._id} className='text-left border-b border-gray-400 border-opacity-25'>
+                                            <td className='px-3'>{booking.name || 'undefined'}</td>
+                                            <td className='py-2 px-2 text-wrap font-mono'>{booking.ticket[0]._id}</td>
+                                            <td className='px-3'>{booking.email || 'undefined'}</td>
+                                            <td className='px-3'>{booking.phone || 'undefined'}</td>
+                                            <td className='px-3'>{booking.amount}</td>
+                                            <td className={`${booking.ticket[0].isUsed ? 'text-[#1baf39]' : 'text-[#bd3a2e]'} text-center px-3`}>{booking.ticket[0].isUsed ? 'Yes' : 'No'}</td>
+                                            {<td className='px-3'>{new Date(booking.createdAt).toLocaleString()}</td>}
+                                            <td className='text-center px-3'>{totalQuantity}</td>
+                                            <td className='px-3'>{ticketTypes}</td>
+                                        </tr>
+                                    )
+                                }
                             }
                             )}
                             {(filteredBookings.length !== 0) && filteredBookings.map((booking, index) => {
@@ -247,19 +265,21 @@ const OrganizerEvent = () => {
                                 const ticketTypes = booking.ticket[0].ticketDetails.map(detail => detail.ticketType).join(', ');
                                 const totalQuantity = booking.ticket[0].ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0);
 
-                                return (
-                                    <tr key={booking.ticket[0]._id} className='text-left'>
-                                        <td className='px-3'>{booking.name || 'undefined'}</td>
-                                        <td className='py-2 px-2 text-wrap font-mono'>{booking.ticket[0]._id}</td>
-                                        <td className='px-3'>{booking.email || 'undefined'}</td>
-                                        <td className='px-3'>{booking.phone || 'undefined'}</td>
-                                        <td className='px-3'>{booking.amount}</td>
-                                        <td className={`${booking.ticket[0].isUsed ? 'text-[#040504]' : 'text-[#bd3a2e]'} text-center px-3`}>{booking.ticket[0].isUsed ? 'Yes' : 'No'}</td>
-                                        <td className='px-3'>{new Date(booking.ticket[0].bookingDate).toLocaleString()}</td>
-                                        <td className='text-center px-3'>{totalQuantity}</td>
-                                        <td className='px-3'>{ticketTypes}</td>
-                                    </tr>
-                                )
+                                if (booking.status === 'SUCCESS' || booking.status === 'created' && booking.ticket.length!==0) {
+                                    return (
+                                        <tr key={booking.ticket[0]._id} className='text-left'>
+                                            <td className='px-3'>{booking.name || 'undefined'}</td>
+                                            <td className='py-2 px-2 text-wrap font-mono'>{booking.ticket[0]._id}</td>
+                                            <td className='px-3'>{booking.email || 'undefined'}</td>
+                                            <td className='px-3'>{booking.phone || 'undefined'}</td>
+                                            <td className='px-3'>{booking.amount}</td>
+                                            <td className={`${booking.ticket[0].isUsed ? 'text-[#040504]' : 'text-[#bd3a2e]'} text-center px-3`}>{booking.ticket[0].isUsed ? 'Yes' : 'No'}</td>
+                                            <td className='px-3'>{new Date(booking.createdAt).toLocaleString()}</td>
+                                            <td className='text-center px-3'>{totalQuantity}</td>
+                                            <td className='px-3'>{ticketTypes}</td>
+                                        </tr>
+                                    )
+                                }
                             }
                             )}
                         </tbody>

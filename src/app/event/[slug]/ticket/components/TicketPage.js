@@ -73,16 +73,16 @@ const Ticket = ({ event }) => {
     }
   };
 
-  const loadScript = () => {
-    loadRazorpay('https://checkout.razorpay.com/v1/checkout.js', () => {
-      console.log('Razorpay Checkout script loaded successfully.');
-    });
-  };
+  // const loadScript = () => {
+  //   loadRazorpay('https://checkout.razorpay.com/v1/checkout.js', () => {
+  //     console.log('Razorpay Checkout script loaded successfully.');
+  //   });
+  // };
 
   //If user exists
   useEffect(() => {
     verifyUser();
-    loadScript();
+    // loadScript();
   }, [])
 
 
@@ -158,11 +158,8 @@ const Ticket = ({ event }) => {
     });
   };
 
+
   const saveOrder = async (ticket, orderDetails) => {
-
-    // -------------------------- Razorpay --------------------------
-
-
     try {
       const res = await axios.post('/api/razorpay/save-order', {
         ticket,
@@ -177,26 +174,6 @@ const Ticket = ({ event }) => {
     } catch (error) {
       console.log("Some error occured")
     }
-
-
-    // -------------------------- PhonePe --------------------------
-
-
-    // try {
-    //   const res = await axios.post('/api/razorpay/save-order', {
-    //     ticket,
-    //     orderDetails,
-    //     convenienceFee: convFee,
-    //     platformFee,
-    //     phone: ph,
-    //     email: form.email,
-    //     firstname: form.firstname,
-    //     lastname: form.lastname,
-    //   });
-    // } catch (error) {
-    //   console.log("Some error occured")
-    // }
-
   }
 
   const createNewUser = async () => {
@@ -211,16 +188,17 @@ const Ticket = ({ event }) => {
 
       const data = await res.json();
       if (data.success) {
-        // verifyUser();
+        // After creating the user, log them in
+        login(data.user, true);
         return true;
-      }
-      else {
-        toast.error('Some error occured!');
-        return false
+      } else {
+        alert('Error creating user!');
+        return false;
       }
     } catch (error) {
       toast.error('Some error occured!');
-      return false
+      console.error('Error creating user:', error);
+      return false;
     }
   }
 
@@ -235,175 +213,213 @@ const Ticket = ({ event }) => {
       });
 
 
+      // if (res.ok) {
+      //   console.log("User Exists")
+      //   const data = await res.json();
+      //   return data.success;
+      // } else {
+      //   return false;
+      // }
       if (res.ok) {
         const data = await res.json();
-        return data.success;
+        return { status: data.success, user: data.user };
       } else {
-        return false;
+        return { status: false, user: null };
       }
     } catch (error) {
       console.log(error);
-      return false;
+      return { status: false, user: null };
     }
   }
+
+
+
+
+
+  const makePayment = async () => {
+
+    const transactionId = "Tr-" + uuidv4().toString(36).slice(-6);
+
+    // console.log(transactionId)
+
+    const ticketDetails = tickets.filter(ticket => ticket.selected > 0).map(ticket => ({
+      ticketType: ticket.phaseName, // Assuming phaseName serves as ticketType
+      quantity: ticket.selected,    // Number of tickets selected
+      price: ticket.price,          // Price per ticket
+      // Add any other necessary fields here
+    }));
+
+    
+    const orderPayload = {
+      orderId: transactionId,
+      userId: user?.userData?._id || '6671a4ac0e924ab6086fbd22',
+      eventId: event._id,
+      ticketDetails: ticketDetails,
+      status: 'PENDING',
+      amount: totalAmt,
+      baseAmt: subtotal,
+      convenienceFee: convFee,
+      platformFee: platformFee,
+      currency: 'INR',
+      notes: `Payment for ${event.title}`,
+      name: form.firstname + " " + form.lastname,
+      phone: ph,
+      email: form.email,
+    };
+    
+    console.log("Payload before sending:", orderPayload);
+
+
+    try {
+      // Save transaction to the database
+      const orderResponse = await axios.post('/api/phonepe/save-order', orderPayload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (orderResponse.data.success) {
+        const payload = {
+          merchantId: process.env.NEXT_PUBLIC_PHONEPE_MERCHANT_ID,
+          merchantTransactionId: transactionId,
+          merchantUserId: 'OB-' + uuidv4().toString(36).slice(-6),
+          amount: orderPayload.amount * 100,
+          redirectUrl: `https://onlybees.in/api/phonepe/events/status/${transactionId}`,
+          redirectMode: "POST",
+          callbackUrl: `https://onlybees.in/api/phonepe/events/status/${transactionId}`,
+          mobileNumber: ph,
+          paymentInstrument: {
+            type: "PAY_PAGE",
+          },
+        };
+
+        console.log("Payload before sending:", payload);
+
+        const response = await axios.post('/api/phonepe/pay', payload, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const redirectUrl = response.data.data.data.instrumentResponse.redirectInfo.url;
+        window.location.href = redirectUrl;
+      }
+    } catch (error) {
+      console.error('Payment request error: ', error.response ? error.response.data : error.message);
+    }
+  };
+
 
   const handleCheckout = async () => {
 
 
     // -------------------------- Razorpay --------------------------
 
-    try {
-      const receiptId = generateReceiptId();
-      const ticketDetails = tickets.filter(ticket => ticket.selected > 0).map(ticket => ({
-        ticketType: ticket.phaseName, // Assuming phaseName serves as ticketType
-        quantity: ticket.selected,    // Number of tickets selected
-        price: ticket.price,          // Price per ticket
-        // Add any other necessary fields here
-      }));
+    // try {
+    //   const receiptId = generateReceiptId();
+    //   const ticketDetails = tickets.filter(ticket => ticket.selected > 0).map(ticket => ({
+    //     ticketType: ticket.phaseName, // Assuming phaseName serves as ticketType
+    //     quantity: ticket.selected,    // Number of tickets selected
+    //     price: ticket.price,          // Price per ticket
+    //     // Add any other necessary fields here
+    //   }));
 
-      const userID = (user.isRegistered) ? user.userData._id : "1000000001";
-      const notes = (user.isRegistered) ? "" : "New user";
+    //   const userID = (user.isRegistered) ? user.userData._id : "1000000001";
+    //   const notes = (user.isRegistered) ? "" : "New user";
 
-      const response = await axios.post('/api/razorpay/order', {
-        userId: userID, // Replace with actual user ID
-        eventId: event._id, // Replace with actual event ID
-        ticketDetails: ticketDetails,
-        amount: totalAmt,
-        currency: 'INR',
-        receipt: receiptId, // Replace with actual receipt ID
-        notes: { notes }, // Optional: Replace with any additional notes
-      });
+    //   const response = await axios.post('/api/razorpay/order', {
+    //     userId: userID, // Replace with actual user ID
+    //     eventId: event._id, // Replace with actual event ID
+    //     ticketDetails: ticketDetails,
+    //     amount: totalAmt,
+    //     currency: 'INR',
+    //     receipt: receiptId, // Replace with actual receipt ID
+    //     notes: { notes }, // Optional: Replace with any additional notes
+    //   });
 
-      const { order, ticket, orderDetails } = response.data;
-      setTicketDet(ticket)
-      setOrderDet(orderDetails)
-
-
-      const keyId = process.env.RAZORPAY_KEY_ID;
-      const keySecret = process.env.RAZORPAY_KEY_SECRET;
-
-      const razorpay = new Razorpay({
-        key_id: "rzp_test_Hw6O2zGAwkq0jb",
-        key_secret: "kPUxYjHvaZHRXYnL8825eomm",
-      });
-
-      // Open Razorpay checkout form
-      const options = {
-        key: razorpay.key_id,
-        amount: order.amount * 100, // Amount in paise
-        currency: order.currency,
-        name: 'Onlybees',
-        image: "https://shorturl.at/kPO66",
-        description: `Entry tickets for ${event.title}`,
-        order_id: order.id,
-
-        handler: async function (response) {
-          // alert(`Payment successful. Payment ID: ${response.razorpay_payment_id}`);
-          const paymentId = response.razorpay_payment_id;
-          if (user.userData) {
-            saveOrder(ticket, { ...orderDetails, paymentId });
-          }
-          else {
-            userExists().then((exists) => {
-              if (exists) {
-                saveOrder(ticket, { ...orderDetails, paymentId });
-              } else {
-                createNewUser().then((created) => {
-                  saveOrder(ticket, { ...orderDetails, paymentId });
-                })
-              }
-            });
-          }
-          setPage("success")
-          // router.push("/dashboard/my-tickets")
-        },
-
-        prefill: {
-          name: `${form.firstname} ${form.lastname}`,
-          email: form.email,
-          contact: ph,
-        },
-        theme: {
-          color: '#00FF38',
-        },
-      };
-
-      if (typeof window !== 'undefined' && typeof window.Razorpay === 'function') {
-        const rzp1 = new window.Razorpay(options);
-        rzp1.open();
-      } else {
-        console.error('Razorpay library not available');
-      }
+    //   const { order, ticket, orderDetails } = response.data;
+    //   setTicketDet(ticket)
+    //   setOrderDet(orderDetails)
 
 
-    } catch (error) {
-      console.error('Error initiating payment:', error);
-      // Handle error, e.g., show error message to user
-      setPage("failed")
-    }
+    //   const keyId = process.env.RAZORPAY_KEY_ID;
+    //   const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    //   const razorpay = new Razorpay({
+    //     key_id: "rzp_test_Hw6O2zGAwkq0jb",
+    //     key_secret: "kPUxYjHvaZHRXYnL8825eomm",
+    //   });
+
+    //   // Open Razorpay checkout form
+    //   const options = {
+    //     key: razorpay.key_id,
+    //     amount: order.amount * 100, // Amount in paise
+    //     currency: order.currency,
+    //     name: 'Onlybees',
+    //     image: "https://shorturl.at/kPO66",
+    //     description: `Entry tickets for ${event.title}`,
+    //     order_id: order.id,
+
+    //     handler: async function (response) {
+    //       // alert(`Payment successful. Payment ID: ${response.razorpay_payment_id}`);
+    //       const paymentId = response.razorpay_payment_id;
+    //       if (user.userData) {
+    //         saveOrder(ticket, { ...orderDetails, paymentId });
+    //       }
+    //       else {
+    //         userExists().then((exists) => {
+    //           if (exists) {
+    //             saveOrder(ticket, { ...orderDetails, paymentId });
+    //           } else {
+    //             createNewUser().then((created) => {
+    //               saveOrder(ticket, { ...orderDetails, paymentId });
+    //             })
+    //           }
+    //         });
+    //       }
+    //       setPage("success")
+    //       // router.push("/dashboard/my-tickets")
+    //     },
+
+    //     prefill: {
+    //       name: `${form.firstname} ${form.lastname}`,
+    //       email: form.email,
+    //       contact: ph,
+    //     },
+    //     theme: {
+    //       color: '#00FF38',
+    //     },
+    //   };
+
+    //   if (typeof window !== 'undefined' && typeof window.Razorpay === 'function') {
+    //     const rzp1 = new window.Razorpay(options);
+    //     rzp1.open();
+    //   } else {
+    //     console.error('Razorpay library not available');
+    //   }
+
+
+    // } catch (error) {
+    //   console.error('Error initiating payment:', error);
+    //   // Handle error, e.g., show error message to user
+    //   setPage("failed")
+    // }
 
 
 
     // -------------------------- PhonePe --------------------------
 
-    // e.preventDefault();
-
-    // const transactionid = "Ev-" + uuidv4().toString(36).slice(-6);
-
-    // const payload = {
-    //   merchantId: process.env.NEXT_PUBLIC_PHONEPE_MERCHANT_ID,
-    //   merchantTransactionId: transactionid,
-    //   merchantUserId: (user.isRegistered) ? user.userData._id : "1000000001",
-    //   amount: 200,
-    //   redirectUrl: `https://onlybees.in/`,
-    //   redirectMode: "POST",
-    //   callbackUrl: `https://onlybees.in/`,
-    //   mobileNumber: ph,
-    //   paymentInstrument: {
-    //     type: "PAY_PAGE",
-    //   },
-    // };
-
-    // try {
-    //   const response = await axios.post('/api/phonepe/pay', payload, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //   });
-
-    //   if (response.ok) {
-    //     const receiptId = generateReceiptId();
-    //     const ticketDetails = tickets.filter(ticket => ticket.selected > 0).map(ticket => ({
-    //       ticketType: ticket.phaseName, // Assuming phaseName serves as ticketType
-    //       quantity: ticket.selected,    // Number of tickets selected
-    //       price: ticket.price,          // Price per ticket
-    //       // Add any other necessary fields here
-    //     }));
-
-    //     const userID = (user.isRegistered) ? user.userData._id : "1000000001";
-    //     const notes = (user.isRegistered) ? "" : "New user";
-
-    //     const response = await axios.post('/api/razorpay/order', {
-    //       userId: userID, // Replace with actual user ID
-    //       eventId: event._id, // Replace with actual event ID
-    //       ticketDetails: ticketDetails,
-    //       amount: totalAmt,
-    //       currency: 'INR',
-    //       receipt: receiptId, // Replace with actual receipt ID
-    //       notes: { notes }, // Optional: Replace with any additional notes
-    //     });
-
-    //     const { order, ticket, orderDetails } = response.data;
-    //     setTicketDet(ticket)
-    //     setOrderDet(orderDetails)
-    //   }
-
-    //   const redirectUrl = response.data.data.data.instrumentResponse.redirectInfo.url;
-    //   window.location.href = redirectUrl;
-    // } catch (error) {
-    //   console.error('Payment request error: ', error.response ? error.response.data : error.message);
-    // }
-
+    const userCheck = await userExists();
+    if (userCheck.status) {
+      // User exists, proceed with payment
+      makePayment();
+    } else {
+      // User does not exist, create new user
+      const userCreated = await createNewUser();
+      if (userCreated) {
+        makePayment();
+      }
+    }
 
 
   };

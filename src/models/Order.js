@@ -1,11 +1,23 @@
 import mongoose from 'mongoose';
 
+// Define the ticketPrice sub-schema
+const TicketPriceSchema = new mongoose.Schema({
+  ticketType: { type: String, required: true },
+  quantity: { type: Number, required: true },
+  price: { type: Number, required: true },
+}, { _id: false });
+
+
 const orderSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   event: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
+  ticketDetails: [TicketPriceSchema], // Array of ticket types, quantities, and prices
   amount: { type: Number, required: true },
-  currency: { type: String, required: true },
-  receipt: { type: String, required: true },
+  baseAmt: { type: Number },
+  convenienceFee: { type: Number },
+  platformFee: { type: Number },
+  currency: { type: String },
+  receipt: { type: String },
   status: { type: String, default: 'created' },
   paymentId: { type: String },
   orderId: { type: String, required: true },
