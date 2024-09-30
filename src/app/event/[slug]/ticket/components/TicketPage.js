@@ -101,9 +101,10 @@ const Ticket = ({ event }) => {
 
   useEffect(() => {
     if (event && event.ticketPrice) {
-      const transformedData = Object.entries(event.ticketPrice).map(([phaseName, { quantity, price, info, coverCharge }]) => ({
+      const transformedData = Object.entries(event.ticketPrice).map(([phaseName, { quantity, maxPerUser, price, info, coverCharge }]) => ({
         phaseName,
         quantity,
+        maxPerUser,
         price,
         info,
         coverCharge,
@@ -129,7 +130,7 @@ const Ticket = ({ event }) => {
   const handleIncrement = (phaseName) => {
     setTickets((prevState) => {
       const newTickets = prevState.map((ticket) =>
-        ticket.phaseName === phaseName && ticket.selected < ticket.quantity && ticket.selected < 10
+        ticket.phaseName === phaseName && ticket.selected < ticket.quantity && ticket.selected < 10 && (!ticket.maxPerUser ? true : ticket.maxPerUser > ticket.selected)
           ? {
             ...ticket,
             selected: ticket.selected + 1,
@@ -232,7 +233,29 @@ const Ticket = ({ event }) => {
     }
   }
 
+  const fetchUserBookings = async (userId, eventId) => {
+    try {
+      const response = await fetch(`/api/events/userbookings?userId=${userId}&eventId=${eventId}`);
+      const data = await response.json();
 
+      if (data.success) {
+        // Map the bookings to the phaseName for easier lookup
+        const bookingsByPhase = {};
+        data.details.forEach(booking => {
+          booking.ticketDetails.forEach(ticket => {
+            bookingsByPhase[ticket.ticketType] = (bookingsByPhase[ticket.ticketType] || 0) + ticket.quantity;
+          });
+        });
+        return bookingsByPhase; // Return an object where the key is ticket.phaseName and value is the quantity booked
+      } else {
+        console.error('No bookings found for user and event.');
+        return {};
+      }
+    } catch (error) {
+      console.error('Error fetching user bookings:', error);
+      return {};
+    }
+  };
 
 
 
@@ -249,7 +272,20 @@ const Ticket = ({ event }) => {
       // Add any other necessary fields here
     }));
 
-    
+    // Check user bookings before proceeding with payment
+    const existingBookings = await fetchUserBookings(user?.userData?._id, event._id);
+
+    // Compare selected tickets with maxPerUser limit
+    for (const ticket of tickets) {
+      const totalSelected = ticket.selected;
+      const existingBookingCount = existingBookings[ticket.phaseName] || 0;  // Use phaseName to match booking count
+
+      if (ticket.maxPerUser && totalSelected + existingBookingCount > ticket.maxPerUser) {
+        toast.error(`You have already booked ${existingBookingCount} tickets for ${ticket.phaseName}. You can only book ${ticket.maxPerUser - existingBookingCount} more tickets.`);
+        return; // Stop the payment process if the limit is exceeded
+      }
+    }
+
     const orderPayload = {
       orderId: transactionId,
       userId: user?.userData?._id || '6671a4ac0e924ab6086fbd22',
@@ -266,7 +302,7 @@ const Ticket = ({ event }) => {
       phone: ph,
       email: form.email,
     };
-    
+
     console.log("Payload before sending:", orderPayload);
 
 

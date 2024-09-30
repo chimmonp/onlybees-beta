@@ -7,6 +7,9 @@ const TicketPriceSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    maxPerUser: {
+        type: Number,
+    },
     price: {
         type: Number,
         required: true,

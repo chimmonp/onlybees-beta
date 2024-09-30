@@ -120,8 +120,8 @@ export async function POST(req, res) {
 
             // console.log("\n\nTicketDetails----", totalQuantity, selectedTickets, "\n\n")
 
-            const baseAmt = order.amount / 1.18;
-            const gst = order.amount - baseAmt;
+            const baseAmt = ( order.amount - order.convenienceFee - order.convenienceFee ) / 1.18;
+            const gst = ( order.amount - order.convenienceFee - order.convenienceFee ) - baseAmt;
 
 
             const newTicket = new Ticket({ ticketDetails: order.ticketDetails, user: user._id, isUsed: false, orderId: order._id, event: order.event });
@@ -223,7 +223,7 @@ export async function POST(req, res) {
                 order.event,
                 {
                     $inc: {
-                        totalSales: order.amount,
+                        totalSales: ( order.amount - order.convenienceFee - order.convenienceFee ),
                         ticketsSold: totalQuantity,
                     },
                 },
