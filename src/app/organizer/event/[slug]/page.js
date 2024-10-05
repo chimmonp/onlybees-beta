@@ -116,7 +116,7 @@ const OrganizerEvent = () => {
 
     const csvHeaders = [
         { label: 'Name', key: 'name' },
-        { label: 'Ticket Number', key: 'ticketNumber' },
+        { label: 'Order ID', key: 'order_id' },
         { label: 'Email', key: 'email' },
         { label: 'Phone', key: 'phone' },
         { label: 'Amount', key: 'amount' },
@@ -144,7 +144,7 @@ const OrganizerEvent = () => {
     .filter(booking => booking.ticket && booking.ticket.length !== 0) // Filter out bookings where ticket array is empty
     .map((booking) => ({
         name: booking.name || 'undefined',
-        ticketNumber: booking.ticket[0]._id || 'undefined',
+        order_id: booking.orderId || 'undefined',
         email: booking.email || 'undefined',
         phone: booking.phone || 'undefined',
         amount: booking.amount || 'undefined',
@@ -220,15 +220,16 @@ const OrganizerEvent = () => {
                     <table className='min-w-full'>
                         <thead className='bg-[#555555]'>
                             <tr className='text-left'>
-                                <th className='px-3 py-3 font-medium text-sm'>Name</th>
-                                <th className='px-3 py-3 font-medium text-sm'>Ticket No</th>
-                                <th className='px-3 py-3 font-medium text-sm'>Email</th>
-                                <th className='px-3 py-3 font-medium text-sm'>Mobile</th>
-                                <th className='px-3 py-3 font-medium text-sm'>Amount</th>
-                                <th className='px-3 py-3 font-medium text-sm'>Check-in</th>
-                                <th className='px-3 py-3 font-medium text-sm'>Date</th>
-                                <th className='px-3 py-3 font-medium text-sm'>Tickets</th>
-                                <th className='px-3 py-3 font-medium text-sm'>Ticket Type</th>
+                                <th className='px-3 py-3 font-medium text-nowrap text-sm border-r border-gray-400 border-opacity-25'>Name</th>
+                                <th className='px-3 py-3 font-medium text-nowrap text-sm border-r border-gray-400 border-opacity-25'>Email</th>
+                                <th className='px-3 py-3 font-medium text-nowrap text-sm border-r border-gray-400 border-opacity-25'>Mobile</th>
+                                <th className='px-3 py-3 font-medium text-nowrap text-sm border-r border-gray-400 border-opacity-25'>Amount</th>
+                                <th className='px-3 py-3 font-medium text-nowrap text-sm border-r border-gray-400 border-opacity-25'>Tickets</th>
+                                <th className='px-3 py-3 text-nowrap font-medium text-sm border-r border-gray-400 border-opacity-25'>Check-in</th>
+                                <th className='px-3 py-3 font-medium text-nowrap text-sm border-r border-gray-400 border-opacity-25'>Date</th>
+                                <th className='px-3 py-3 font-medium text-nowrap text-sm border-r border-gray-400 border-opacity-25'>Order ID</th>
+                                <th className='px-3 py-3 font-medium text-nowrap text-sm'>Ticket Type</th>
+                                {/* <th className='px-3 py-3 font-medium text-sm'>Status</th> */}
                             </tr>
                         </thead>
                         <tbody className='bg-[#D9D9D9] text-black text-sm'>
@@ -246,15 +247,16 @@ const OrganizerEvent = () => {
                                 if (booking.status === 'SUCCESS' || booking.status === 'created' && booking.ticket.length!==0) {
                                     return (
                                         <tr key={booking.ticket[0]._id} className='text-left border-b border-gray-400 border-opacity-25'>
-                                            <td className='px-3'>{booking.name || 'undefined'}</td>
-                                            <td className='py-2 px-2 text-wrap font-mono'>{booking.ticket[0]._id}</td>
-                                            <td className='px-3'>{booking.email || 'undefined'}</td>
-                                            <td className='px-3'>{booking.phone || 'undefined'}</td>
-                                            <td className='px-3'>{booking.amount}</td>
-                                            <td className={`${booking.ticket[0].isUsed ? 'text-[#1baf39]' : 'text-[#bd3a2e]'} text-center px-3`}>{booking.ticket[0].isUsed ? 'Yes' : 'No'}</td>
-                                            {<td className='px-3'>{new Date(booking.createdAt).toLocaleString()}</td>}
-                                            <td className='text-center px-3'>{totalQuantity}</td>
-                                            <td className='px-3'>{ticketTypes}</td>
+                                            <td className='px-3 text-nowrap border-r border-gray-400 border-opacity-25'>{booking.name || 'undefined'}</td>
+                                            <td className='px-3 text-nowrap border-r border-gray-400 border-opacity-25'>{booking.email || 'undefined'}</td>
+                                            <td className='px-3 font-mono text-nowrap border-r border-gray-400 border-opacity-25'>{booking.phone || 'undefined'}</td>
+                                            <td className='px-3 text-nowrap border-r border-gray-400 border-opacity-25'>{booking.amount}</td>
+                                            <td className='text-center px-3 text-nowrap border-r border-gray-400 border-opacity-25'>{totalQuantity}</td>
+                                            <td className={`${booking.ticket[0].isUsed ? 'text-[#1baf39]' : 'text-[#bd3a2e]'} text-center px-3 text-nowrap border-r border-gray-400 border-opacity-25`}>{booking.ticket[0].isUsed ? 'Yes' : 'No'}</td>
+                                            {<td className='px-3 text-nowrap border-r border-gray-400 border-opacity-25'>{new Date(booking.createdAt).toLocaleString()}</td>}
+                                            <td className='py-2 px-2 text-nowrap font-mono border-r border-gray-400 border-opacity-25'>{booking.orderId}</td>
+                                            <td className='px-3 text-nowrap'>{ticketTypes}</td>
+                                            {/* <td className='px-3'>{booking.status}</td> */}
                                         </tr>
                                     )
                                 }

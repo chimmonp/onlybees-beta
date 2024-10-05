@@ -53,6 +53,7 @@ export const GET = async (req) => {
                     user: 1,
                     event: 1,
                     amount: 1,
+                    orderId: 1,
                     name: 1,
                     email: 1,
                     phone: 1,
@@ -65,7 +66,8 @@ export const GET = async (req) => {
 
         // Execute aggregation pipeline
         const bookings = await Order.aggregate(pipeline);
-        const totalEntries = await Order.countDocuments({ event: eventId });
+        // const totalEntries = await Order.countDocuments({ event: eventId });
+        const totalEntries = bookings.length;
 
         // Calculate total sales amount
         const totalSalesAmount = await Order.aggregate([
