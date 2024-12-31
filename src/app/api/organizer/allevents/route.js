@@ -23,7 +23,7 @@ export const GET = async (req, res) => {
         await connectMongo();
 
         // Find all events where organizer matches the provided ID
-        const events = await Event.find({ organizer: organizerId });
+        const events = await Event.find({ organizer: organizerId }).sort({date: -1});
         if(!events)
             return new Response(JSON.stringify({ success: false, message: 'No Events found' }), { status: 404 });
         
