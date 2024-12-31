@@ -51,8 +51,6 @@ const OrganizerEvent = () => {
             data.orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setBookings(data.orders);
             setTotalEntries(data.totalEntries);
-            setTotalTickets(data.totalTicketNumbers);
-            setTotalSales(data.totalSalesAmount);
             setTotalCheckIns(data.totalCheckIns);
             setLoading(false);
         } catch (error) {
@@ -61,8 +59,29 @@ const OrganizerEvent = () => {
         }
     };
 
+    const fetchSalesInfo = async () => {
+        if (!eventId) {
+            return;
+        }
+        try {
+            setLoading(true);
+            const response = await fetch(`/api/organizer/salesinfo?eventId=${eventId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch data');
+            }
+            const result = await response.json();
+            setTotalTickets(result.data.totalQuantity);
+            setTotalSales(result.data.totalBaseAmount);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching bookings:', error);
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         fetchBookings();
+        fetchSalesInfo();
         setEventId(pathname.split('/').pop());
     }, [eventId]); // Fetch new data whenever currentPage or entries changes
 
@@ -120,6 +139,7 @@ const OrganizerEvent = () => {
         { label: 'Email', key: 'email' },
         { label: 'Phone', key: 'phone' },
         { label: 'Amount', key: 'amount' },
+        { label: 'Net Amount', key: 'netAmount' },
         { label: 'Check-in', key: 'checkInStatus' },
         { label: 'Booking Date', key: 'bookingDate' },
         { label: 'Total Quantity', key: 'totalQuantity' },
@@ -147,7 +167,8 @@ const OrganizerEvent = () => {
         order_id: booking.orderId || 'undefined',
         email: booking.email || 'undefined',
         phone: booking.phone || 'undefined',
-        amount: booking.amount || 'undefined',
+        amount: booking.baseAmt || 'undefined',
+        netAmount: booking.amount || 'undefined',
         checkInStatus: booking.ticket[0].isUsed ? 'Yes' : 'No',
         bookingDate: new Date(booking.createdAt).toLocaleString() || 'undefined',
         totalQuantity: booking.ticket[0].ticketDetails.reduce((sum, detail) => sum + parseInt(detail.quantity, 10), 0) || 'undefined',
@@ -166,11 +187,11 @@ const OrganizerEvent = () => {
                 <p className='text-sm'>Event</p>
                 <div className='mt-10 grid xl:grid-cols-4 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-5'>
                     <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 md:px-5 px-1 rounded-lg'>
-                        <p className='font-medium text-lg'>{eventDetails.totalSales}</p>
+                        <p className='font-medium text-lg'>{totalSales}</p>
                         <p className='text-[#555555]'>Total Sales in INR</p>
                     </div>
                     <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 px-5 rounded-lg'>
-                        <p className='font-medium text-lg'>{eventDetails.ticketsSold}</p>
+                        <p className='font-medium text-lg'>{totalTickets}</p>
                         <p className='text-[#555555]'>Total Tickets</p>
                     </div>
                     <div className='flex flex-col items-center justify-center bg-[#D9D9D9] text-black h-full w-full py-10 px-5 rounded-lg'>

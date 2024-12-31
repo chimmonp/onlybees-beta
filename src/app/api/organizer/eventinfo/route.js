@@ -53,6 +53,7 @@ export const GET = async (req) => {
                     user: 1,
                     event: 1,
                     amount: 1,
+                    baseAmt: 1,
                     orderId: 1,
                     name: 1,
                     email: 1,
@@ -72,7 +73,7 @@ export const GET = async (req) => {
         // Calculate total sales amount
         const totalSalesAmount = await Order.aggregate([
             { $match: { event: event._id } },
-            { $group: { _id: null, totalAmount: { $sum: '$amount' } } }
+            { $group: { _id: null, totalAmount: { $sum: '$baseAmt' } } }
         ]);
 
         // Calculate total ticket numbers
