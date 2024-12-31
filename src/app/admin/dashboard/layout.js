@@ -10,6 +10,7 @@ import { HiMenuAlt3 } from "react-icons/hi";
 import { MdOutlineDashboard, MdEventNote } from "react-icons/md";
 import { AiOutlineUser } from "react-icons/ai";
 import { IoTicketSharp } from "react-icons/io5";
+import GroupIcon from '@mui/icons-material/Group';
 
 
 // Components
@@ -76,6 +77,7 @@ export default function DashboardPage({ children }) {
   const menus = [
     { name: "Dashboard", link: "/admin/dashboard", icon: MdOutlineDashboard },
     { name: "Events", link: "/admin/dashboard/events", icon: MdEventNote },
+    { name: "Organizers", link: "/admin/dashboard/organizers", icon: GroupIcon },
     { name: "Bookings", link: "/admin/dashboard/bookings", icon: IoTicketSharp },
     // { name: "Sign out", link: "/", icon: AiOutlineUser },
     // { name: "messages", link: "/", icon: FiMessageSquare },

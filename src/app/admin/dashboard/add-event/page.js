@@ -1,8 +1,10 @@
 'use client';
 
 import Loading from '@/app/components/Loading';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+
+import axios from 'axios'; // Import axios or use fetch
 
 
 //React Toastify
@@ -13,6 +15,9 @@ import showSuccessToast from '@/app/components/SuccessToast';
 
 
 export default function AddEvent() {
+
+    
+    const [organizers, setOrganizers] = useState([]);
 
     const [form, setForm] = useState({
         organizer: '',
@@ -28,6 +33,23 @@ export default function AddEvent() {
     });
 
     const [loading, setLoading] = useState(false);
+
+    const fetchOrganizers = async () => {
+        setLoading(true)
+        try {
+            const response = await axios.get('/api/organizer/getallorganizers'); // Replace with your actual API endpoint
+            setOrganizers(response.data.organizers); // Assuming response.data.organizers is an array of organizers
+            setLoading(false)
+        } catch (error) {
+            console.error('Error fetching organizers:', error);
+            setLoading(false)
+        }
+    };
+
+    useEffect(() => {
+        fetchOrganizers(); // Fetch organizers on component mount
+        // Other useEffect logic to set form values from event
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -97,6 +119,9 @@ export default function AddEvent() {
         }
     };
 
+    if (loading)
+        return <Loading />
+
 
     return (
         <div className="lg:mx-0 mx-5 py-5">
@@ -108,16 +133,19 @@ export default function AddEvent() {
             >
                 <div className='flex lg:flex-row flex-col lg:gap-12'>
                     <div className='flex flex-col w-full'>
-                        <label className="mb-1 font-bold" htmlFor="organizer">Event Organizer</label>
-                        <input
-                            className="mb-4 p-2 border bg-[#1b1b1b] border-black rounded"
-                            type="text"
+                    <label className="mb-1 font-bold" htmlFor="organizer">Event Organizer</label>
+                        <select
+                            className="mb-4 p-2 border bg-[#1b1b1b] border-gray-800 rounded"
                             name="organizer"
                             value={form.organizer}
                             onChange={handleChange}
-                            placeholder="Organizer"
                             required
-                        />
+                        >
+                            <option value="">Select Organizer</option>
+                            {organizers.map(org => (
+                                <option key={org._id} value={org._id}>{org.name}</option>
+                            ))}
+                        </select>
 
                         <label className="mb-1 font-bold" htmlFor="title">Event Title</label>
                         <input

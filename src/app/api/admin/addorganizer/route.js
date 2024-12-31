@@ -1,4 +1,4 @@
-// src/api/organizers/registerOrganizer.js
+// src/api/admin/addorganizer
 import connectMongo from '@/lib/mongodb';
 import Organizer from '@/models/Organizer';
 import { hashPassword } from '@/lib/bcrypt';
@@ -11,24 +11,21 @@ export const POST = async (req) => {
 
         await connectMongo();
 
-        const { name, email, phone, city, password, secret } = await req.json();
-        
-        // Check if the organizer already exists
-        const existingOrganizer = await Organizer.findOne({ $or: [{ email: email }, { phone: phone }] });
-        
-         if (existingOrganizer) {
-             return new Response(JSON.stringify({ success: false, message: 'Organizer already exists' }), { status: 400 });
-         }
-
-
-        if (secret !== process.env.SEED_SECRET) {
-            return new Response(JSON.stringify({ success: false, error: 'Forbidden' }), { status: 403 });
-        }
+        const { name, email, phone, city, password } = await req.json();
 
         // Validate the input
         if (!name || !email || !phone || !city || !password) {
             console.log("Missing fields!", name, email, phone, city, password);
             return new Response(JSON.stringify({ success: false, error: 'Missing required fields' }), { status: 400 });
+        }
+
+        // Check if the organizer already exists
+        const existingOrganizer = await Organizer.findOne({ $or: [{ email: email }, { phone: phone }] });
+
+        console.log(existingOrganizer)
+
+        if (existingOrganizer) {
+            return new Response(JSON.stringify({ success: false, message: 'Organizer already exists' }), { status: 400 });
         }
 
         // Hash the password
