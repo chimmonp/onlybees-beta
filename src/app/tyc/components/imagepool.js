@@ -109,7 +109,7 @@ const ImageComponent = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ firstname: name, lastname: "TYC", email, phone }),
+        body: JSON.stringify({ firstname: name, lastname: "TYC", email, phoneNumber: phone }),
       });
 
       const data = await res.json();
