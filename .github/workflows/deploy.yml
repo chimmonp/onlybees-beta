@@ -53,7 +53,7 @@ jobs:
 
       - name: Update ECS Service (Force New Deployment)
         run: |
-          aws ecs update-service --cluster EventsCluster --service EventPlatformService --force-new-deployment
+          aws ecs update-service --cluster Events --service EventsPlatformService --force-new-deployment
 
       - name: Send Discord Notification - Deploy Completed
         run: |
