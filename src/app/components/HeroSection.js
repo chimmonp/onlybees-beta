@@ -3,7 +3,7 @@ import React from 'react';
 //Components
 import VideoComponent from './VideoComponent';
 
-import banner from "../../../public/banner.jpeg"
+import banner from "../../../public/banner.png"
 import Image from 'next/image';
 
 const HeroSection = () => {
