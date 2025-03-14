@@ -20,7 +20,7 @@ const HeroSection = () => {
           sizes="100svw"
           className="md:w-[70svw] w-[90svw] h-auto object-contain mx-auto" 
         />
-        <Link href="https://sports.onlybees.in" className='md:text-4xl text-2xl font-coolvetica bg-black text-white px-5 py-2 w-fit mx-auto my-10 rounded-lg'>BOOK NOW</Link>
+        <Link href="https://sports.onlybees.in" className='mx-auto my-5 md:text-4xl text-2xl font-coolvetica bg-black text-white px-5 py-2 w-fit mx-auto my-10 rounded-lg'>BOOK NOW</Link>
       </div>
       {/* <VideoComponent />
       <div className='flex flex-col md:w-[37rem] mx-auto px-10 md:px-0'>
