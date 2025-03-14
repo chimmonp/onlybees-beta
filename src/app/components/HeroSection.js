@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Link from 'next/link';
+
 //Components
 import VideoComponent from './VideoComponent';
 
@@ -18,7 +20,7 @@ const HeroSection = () => {
           sizes="100svw"
           className="md:w-[70svw] w-[90svw] h-auto object-contain mx-auto" 
         />
-        <div className='md:text-4xl text-2xl font-coolvetica bg-black text-white px-5 py-2 w-fit mx-auto my-10 rounded-lg'>COMING SOON</div>
+        <Link href="https://sports.onlybees.in" className='md:text-4xl text-2xl font-coolvetica bg-black text-white px-5 py-2 w-fit mx-auto my-10 rounded-lg'>BOOK NOW</Link>
       </div>
       {/* <VideoComponent />
       <div className='flex flex-col md:w-[37rem] mx-auto px-10 md:px-0'>
