@@ -18,6 +18,7 @@ import EventNotFound from './EventNotFound';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import Loading from './Loading';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 
 const EventDetails = (props) => {
@@ -25,8 +26,15 @@ const EventDetails = (props) => {
     const { eventData, error, isLoading, fetchEventData } = useEvent();
     const [formattedDate, setFormattedDate] = useState(null)
 
+    const router = useRouter();
+
     useEffect(() => {
+
+        if(props.slug==='blenders-pride-fashion')
+            router.push('/rsvp')
+
         fetchEventData(props.slug);
+
     }, [props.slug, fetchEventData]);
 
     useEffect(() => {

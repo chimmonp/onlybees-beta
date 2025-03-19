@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ['res.cloudinary.com', 'img.freepik.com'],
+        domains: ['res.cloudinary.com', 'img.freepik.com', 'localhost:3000'],
     },
     webpack: (config, { isServer }) => {
         // Add handlebars-loader for .hbs files
