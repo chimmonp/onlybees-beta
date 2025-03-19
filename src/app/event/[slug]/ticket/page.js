@@ -9,14 +9,20 @@ import TicketPage from './components/TicketPage'
 import { useEvent } from '@/context/EventContext';
 import Loading from '@/app/components/Loading';
 import EventNotFound from '@/app/components/EventNotFound';
+import { useRouter } from 'next/navigation';
 
 
 const Ticket = ({ params }) => {
 
     const { slug } = params;
     const { eventData, fetchEventData, isLoading, error } = useEvent();
+    const router = useRouter();
 
     useEffect(() => {
+
+        if(slug==='blenders-pride-fashion')
+            router.push('/rsvp/');
+
         if (!eventData) {
             fetchEventData(slug);
         }
