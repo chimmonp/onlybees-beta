@@ -22,10 +22,6 @@ const EventItem = (props) => {
         return minPrice === 0 ? 'Free Onwards' : `From ₹${minPrice}`;
     };
 
-    if (props.eventItem.slug === 'odr-shillong') {
-        return;
-    }
-
     return (
         <Link
             href={`/event/${props.eventItem.slug}`}
