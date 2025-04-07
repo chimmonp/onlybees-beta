@@ -10,7 +10,7 @@ import axios from "axios";
 import { sendEmail } from '@/lib/nodemailer'; // Update email sending function for reservations
 import emailTemplate from '@/templates/emailTemplate.hbs'; // Import the reservation email template
 import pdfTemplate from '@/templates/pdfTemplate.hbs'; // Import the reservation email template
-import { generatePdfFromHtml } from '@/lib/generateTicketPDF'; // If you need to generate PDFs for reservations
+// import { generatePdfFromHtml } from '@/lib/generateTicketPDF'; // If you need to generate PDFs for reservations
 import QRCode from 'qrcode';
 
 const formatDate = (date) => {
@@ -238,10 +238,11 @@ export async function POST(req, res) {
             await Ticket.findByIdAndUpdate(newTicket._id, { qrLink: qrCodeUrl });
 
             // Generate PDF from HTML
-            const pdfBuffer = await generatePdfFromHtml(pdfHtml);
+            // const pdfBuffer = await generatePdfFromHtml(pdfHtml);
 
             // Send the email with PDF and QR code attachments
-            await sendEmail(order.email, `Booking Confirmation & Tickets - ${event.title}`, emailHtml, pdfBuffer, newTicket._id);
+            // await sendEmail(order.email, `Booking Confirmation & Tickets - ${event.title}`, emailHtml, pdfBuffer, newTicket._id);
+            await sendEmail(order.email, `Booking Confirmation & Tickets - ${event.title}`, emailHtml, newTicket._id);
 
             // Send the email with PDF attachment
             // await sendEmail(user.email, `Booking Confirmation - ${restaurant.name}`, emailHtml);

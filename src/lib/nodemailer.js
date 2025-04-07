@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 
-export const sendEmail = async (to, subject, htmlContent, pdfBuffer, ticketId) => {
+// export const sendEmail = async (to, subject, htmlContent, pdfBuffer, ticketId) => {
+export const sendEmail = async (to, subject, htmlContent, ticketId) => {
 
     try {
         // Create a transporter
@@ -12,17 +13,17 @@ export const sendEmail = async (to, subject, htmlContent, pdfBuffer, ticketId) =
             },
         });
 
-        let attachments = null;
+        // let attachments = null;
 
-        if(ticketId){
-            attachments = [
-                {
-                    filename: `ticket_${ticketId}.pdf`,
-                    content: pdfBuffer,
-                    contentType: 'application/pdf',
-                },
-            ]
-        }
+        // if(ticketId){
+        //     attachments = [
+        //         {
+        //             filename: `ticket_${ticketId}.pdf`,
+        //             content: pdfBuffer,
+        //             contentType: 'application/pdf',
+        //         },
+        //     ]
+        // }
 
         if(!htmlContent){
             htmlContent = "A new submission has been received"
@@ -34,7 +35,7 @@ export const sendEmail = async (to, subject, htmlContent, pdfBuffer, ticketId) =
             to,
             subject,
             html: htmlContent,
-            attachments: attachments,
+            // attachments: attachments,
         };
 
         // Send email
