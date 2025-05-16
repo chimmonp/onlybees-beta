@@ -118,7 +118,7 @@ const Ticket = ({ event }) => {
   const updateAmounts = (tickets) => {
     const subtotalAmt = tickets.reduce((acc, ticket) => acc + ticket.amount, 0);
     const convFeeAmt = Math.round(0.02 * subtotalAmt);
-    const platformFeeAmt = Math.round(0.02 * subtotalAmt);
+    const platformFeeAmt = Math.round(0.04 * subtotalAmt);
     const totalAmtCalc = subtotalAmt + convFeeAmt + platformFeeAmt;
 
     setSubtotal(subtotalAmt);
